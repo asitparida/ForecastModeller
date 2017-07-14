@@ -3,7 +3,7 @@
         <div class="revenues-actuals-container-tabs-tab" (click)="selectView(PERIOD_TYPE_OPTIONS.MONTHLY)" [class.active]="chartViewSelected === PERIOD_TYPE_OPTIONS.MONTHLY">Monthly</div>
         <div class="revenues-actuals-container-tabs-tab" (click)="selectView(PERIOD_TYPE_OPTIONS.QUARTERLY)" [class.active]="chartViewSelected === PERIOD_TYPE_OPTIONS.QUARTERLY">Quarterly</div>
         <div class="revenues-actuals-container-tabs-tab" (click)="selectView(PERIOD_TYPE_OPTIONS.YEARLY)" [class.active]="chartViewSelected === PERIOD_TYPE_OPTIONS.YEARLY">Yearly</div>
-    </div>
+    </div>b
     <div class="revenues-actuals-container-content">
         <div class="row">
             <div class="col-6 padAdjust">
@@ -56,7 +56,7 @@
                         <td *ngFor="let model of year.MONTHS">
                             <span *ngIf="!isManual">
                                 <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
-                                <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{model.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
+                            <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{model.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
                             </span>
                             <input type="text" *ngIf="isManual" [(ngModel)]="model.VALUE" />
                         </td>
@@ -71,10 +71,10 @@
                                 <i class="fa fa-bars"></i>
                             </div>
                         </th>
-                        <th>Q1   JAN - MAR</th>
-                        <th>Q2   APR - JUN</th>
-                        <th>Q3   JUL - SEP</th>
-                        <th>Q4   OCT - DEC</th>
+                        <th>Q1 JAN - MAR</th>
+                        <th>Q2 APR - JUN</th>
+                        <th>Q3 JUL - SEP</th>
+                        <th>Q4 OCT - DEC</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -86,7 +86,7 @@
                         <td *ngFor="let model of year.QUARTERS">
                             <span>
                                 <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
-                                <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{model.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
+                            <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{model.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
                             </span>
                         </td>
                     </tr>
@@ -112,7 +112,7 @@
                         <td>
                             <span>
                                 <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{year.VALUE | currencyDelimitedWithComma}}</span>
-                                <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{year.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
+                            <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{year.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
                             </span>
                         </td>
                     </tr>
@@ -148,13 +148,11 @@
             </div>
             <div class="revenues-actuals-container-slider-inner-item">
                 <label>Enter Start Date</label>
-                <input class="revenue-ctrl" [(ngModel)]="startDateStr" type="date" min="2016-01-01" max="2021-12-31" title="Enter Start Date"
-                />
+                <input class="revenue-ctrl" [(ngModel)]="startDateStr" type="date" min="2016-01-01" max="2021-12-31" title="Enter Start Date" />
             </div>
             <div class="revenues-actuals-container-slider-inner-item">
                 <label>Enter End Date</label>
-                <input class="revenue-ctrl" [(ngModel)]="endDateStr" type="date" min="2016-01-01" max="2021-12-31" title="Enter End Date"
-                />
+                <input class="revenue-ctrl" [(ngModel)]="endDateStr" type="date" min="2016-01-01" max="2021-12-31" title="Enter End Date" />
             </div>
             <button class="btn btn-primary revenue-ctrl" (click)="process()">Recalculate</button>
         </div>
