@@ -1,0 +1,162 @@
+<div class="revenues-actuals-container">
+    <div class="revenues-actuals-container-tabs">
+        <div class="revenues-actuals-container-tabs-tab" (click)="selectView(PERIOD_TYPE_OPTIONS.MONTHLY)" [class.active]="chartViewSelected === PERIOD_TYPE_OPTIONS.MONTHLY">Monthly</div>
+        <div class="revenues-actuals-container-tabs-tab" (click)="selectView(PERIOD_TYPE_OPTIONS.QUARTERLY)" [class.active]="chartViewSelected === PERIOD_TYPE_OPTIONS.QUARTERLY">Quarterly</div>
+        <div class="revenues-actuals-container-tabs-tab" (click)="selectView(PERIOD_TYPE_OPTIONS.YEARLY)" [class.active]="chartViewSelected === PERIOD_TYPE_OPTIONS.YEARLY">Yearly</div>
+    </div>
+    <div class="revenues-actuals-container-content">
+        <div class="row">
+            <div class="col-6 padAdjust">
+                <h3>Revenues Forecast</h3>
+            </div>
+            <div class="col-6 padAdjust">
+                <select class="revenue-grid-ctrl float-right" [(ngModel)]="viewSelected" (change)="onDataViewChange()">
+                    <option *ngFor="let item of viewOptions" [ngValue]="item.value">{{item.label}}</option>
+                </select>
+                <div class="float-right toggle-ctrl">
+                    <label> Show Chart</label>
+                    <ui-switch color="#106CC8" [(ngModel)]="showCharts"></ui-switch>
+                </div>
+            </div>
+        </div>
+        <div class="revenues-actuals-chart" *ngIf="showCharts">
+            <chart style="width:100%;" [options]="chartOptionsForMonthlyView" [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.MONTHLY"></chart>
+            <chart style="width:100%;" [options]="chartOptionsForQuaterlyView" [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.QUARTERLY"></chart>
+            <chart style="width:100%;" [options]="chartOptionsForYearlyView" [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.YEARLY"></chart>
+        </div>
+        <div class="revenues-actuals-grid">
+            <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.MONTHLY" class="w12">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="revenues-actuals-grid-menu" (click)="showSliderMenu = !showSliderMenu">
+                                <i class="fa fa-bars"></i>
+                            </div>
+                        </th>
+                        <th>JAN</th>
+                        <th>FEB</th>
+                        <th>MAR</th>
+                        <th>APR</th>
+                        <th>MAY</th>
+                        <th>JUN</th>
+                        <th>JUL</th>
+                        <th>AUG</th>
+                        <th>SEP</th>
+                        <th>OCT</th>
+                        <th>NOV</th>
+                        <th>DEC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="empty-row">
+                        <td colspan="13" *ngIf="rows.length == 0 && isManual == false"> No Records for now</td>
+                    </tr>
+                    <tr *ngFor="let year of forecastYears">
+                        <td>{{year.YEAR}}</td>
+                        <td *ngFor="let model of year.MONTHS">
+                            <span *ngIf="!isManual">
+                                <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{model.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
+                            </span>
+                            <input type="text" *ngIf="isManual" [(ngModel)]="model.VALUE" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.QUARTERLY" class="w4">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="revenues-actuals-grid-menu" (click)="showSliderMenu = !showSliderMenu">
+                                <i class="fa fa-bars"></i>
+                            </div>
+                        </th>
+                        <th>Q1   JAN - MAR</th>
+                        <th>Q2   APR - JUN</th>
+                        <th>Q3   JUL - SEP</th>
+                        <th>Q4   OCT - DEC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="empty-row">
+                        <td colspan="13" *ngIf="rows.length == 0 && isManual == false"> No Records for now</td>
+                    </tr>
+                    <tr *ngFor="let year of forecastYears">
+                        <td>{{year.YEAR}}</td>
+                        <td *ngFor="let model of year.QUARTERS">
+                            <span>
+                                <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{model.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.YEARLY" class="w1">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="revenues-actuals-grid-menu" (click)="showSliderMenu = !showSliderMenu">
+                                <i class="fa fa-bars"></i>
+                            </div>
+                        </th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="empty-row">
+                        <td colspan="13" *ngIf="rows.length == 0 && isManual == false"> No Records for now</td>
+                    </tr>
+                    <tr *ngFor="let year of forecastYears">
+                        <td>{{year.YEAR}}</td>
+                        <td>
+                            <span>
+                                <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{year.VALUE | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{year.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="revenues-actuals-container-slider-overlay" [hidden]="!showSliderMenu"></div>
+    <div class="revenues-actuals-container-slider" [class.in]="showSliderMenu">
+        <div class="revenues-actuals-container-slider-inner">
+            <div class="revenues-actuals-container-slider-close" (click)="showSliderMenu = false">
+                <i class="fa fa-close"></i>
+            </div>
+            <div class="revenues-actuals-container-slider-inner-item">
+                <label>Select Growth Value</label>
+                <select class="revenue-ctrl" [(ngModel)]="growthPeriod" title="Select Growth Period">
+                    <option *ngFor="let item of growthPeriodOptions" [ngValue]="item.value">{{item.label}}</option>
+                </select>
+            </div>
+            <div class="revenues-actuals-container-slider-inner-item">
+                <label>Enter Intial Value</label>
+                <input class="revenue-ctrl" [(ngModel)]="startValue" type="number" title="Enter Initial Value" />
+            </div>
+            <div class="revenues-actuals-container-slider-inner-item">
+                <label>Select Growth Type</label>
+                <select class="revenue-ctrl" [(ngModel)]="growthType" title="Select Growth Type">
+                        <option *ngFor="let item of growthTypeOptions" [ngValue]="item.value">{{item.label}}</option>
+                    </select>
+            </div>
+            <div class="revenues-actuals-container-slider-inner-item">
+                <label>Select Growth Value</label>
+                <input class="revenue-ctrl" [(ngModel)]="growth" type="number" title="Enter Growth Value" />
+            </div>
+            <div class="revenues-actuals-container-slider-inner-item">
+                <label>Enter Start Date</label>
+                <input class="revenue-ctrl" [(ngModel)]="startDateStr" type="date" min="2016-01-01" max="2021-12-31" title="Enter Start Date"
+                />
+            </div>
+            <div class="revenues-actuals-container-slider-inner-item">
+                <label>Enter End Date</label>
+                <input class="revenue-ctrl" [(ngModel)]="endDateStr" type="date" min="2016-01-01" max="2021-12-31" title="Enter End Date"
+                />
+            </div>
+            <button class="btn btn-primary revenue-ctrl" (click)="process()">Recalculate</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,360 @@
+$color: #303030;
+
+.padAdjust {
+        padding: 0 25px;
+    }
+
+.revenues-actuals {
+
+    &-chart {
+        width: 100%;
+        margin-bottom: 15px;
+
+        chart {
+            width: 100% !important;
+            margin: 0 auto;
+            display: block;
+           /deep/ .highcharts-container,
+           /deep/ .highcharts-root {
+                width: 100% !important;
+            }
+        }
+    }
+
+    &-container{
+        width:100%;
+        padding: 0;
+        background: #F9F9F9;
+        border: 1px solid #ddd;
+        overflow-x: hidden;
+        position: relative;
+        box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);
+
+        &-tabs {
+            padding: 45px 45px 0 45px;
+            width: 100%;
+            background: #FFF;
+            margin-bottom: 30px;      
+            
+            &-tab {
+                padding: 0 15px;
+                line-height: 48px;
+                border-bottom: 3px solid transparent;
+                height: 48px;
+                box-sizing: border-box;
+                display: inline-block;
+                cursor: pointer;
+                min-width: 100px;
+                text-align: center;
+
+                &:not(.active):hover,
+                &:not(.active):focus,
+                &:not(.active):active {
+                    background: rgba(0, 0, 0, 0.10);
+                }
+                
+                &.active {
+                    border-bottom-color: #106CC8;
+                    cursor: default;
+                }
+            }
+        }
+
+        &-content{
+            position: relative;
+            padding: 0 45px 45px 45px;
+        }
+
+        .toggle-ctrl {
+            margin-right: 45px;
+            position: relative;
+            top: 3px;
+            label {
+                margin: 0;
+                line-height: 32px;
+                margin-right: 5px;
+                vertical-align: top;
+            }
+        }
+
+        &-slider {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translateY(-200%);
+            transition: none;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            &-overlay {
+                width:100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.60);
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+
+            &-close {
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 36px;
+                height: 36px;
+                line-height: 36px;
+                text-align: center;
+                cursor: pointer;
+                color: #909090;
+
+                &:focus,
+                &:hover,
+                &:active {
+                    background: rgba(0, 0, 0, 0.05);
+                }
+            }
+
+            &-inner {
+                width:500px;
+                background: #FFF;
+                box-shadow: 0px 0px 12px 6px rgba(0, 0, 0, 0.03);
+                height: auto;
+                padding: 45px 15px 15px 15px;
+                box-sizing: border-box;
+                position: relative;
+
+                button.revenue-ctrl {
+                    margin-top: 15px;
+                    margin-left: 15px;
+                    min-width: 100px;
+                    line-height: 30px;
+                    padding: 0 10px;
+                    border: none;
+                    background: #d7edff;
+                    color: #303030;
+                    text-align: center;
+                    font-size: x-small;
+                    box-shadow: none;
+                    display: inline-block;
+                    outline: none;
+                    vertical-align: middle;
+                    cursor: pointer;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    font-weight: bold;
+                    &:focus,
+                    &:hover,
+                    &:active {
+                        background: darken(#d7edff, 10);
+                    }
+                }
+
+                &-item {
+                    margin: 10px 0;
+                    width: 49%;
+                    padding: 0 15px;
+                    display: inline-block;
+                    select.revenue-ctrl,
+                    input.revenue-ctrl{
+                        width: 100%;
+                        line-height: 30px;
+                        height: 30px;
+                        padding: 0;
+                        border-bottom: 1px solid rgba(0,0,0,0.10);
+                        border-top: none;
+                        border-left: none;
+                        border-right: none;
+                        background: transparent;
+                        font-size: medium;
+                        box-shadow: none;
+                        display: inline-block;
+                        outline: none;
+                        vertical-align: middle;
+                        margin-bottom: 5px;
+                        min-width: 100px;
+                        color: #303030;
+                        letter-spacing: 1px;
+                    }
+
+                    label {
+                        text-transform: uppercase;
+                        margin-bottom: 0;
+                        font-size: x-small;
+                        letter-spacing: 1px;
+                        font-weight: bold;
+                        width: 100%;
+                        display: block;
+                        color: rgba(0,0,0, 0.30);
+                    }
+                }
+            }
+            
+            &.in {
+                transform: translateY(0);
+                transition: transform 0.5s ease-in 0s;;
+            }
+        }
+
+        input,
+        select {
+            line-height: 36px;
+            height: 36px;
+            padding: 0 0 0 10px;
+            border: 1px solid #ddd;
+            background: #fff;
+            font-size: medium;
+            box-shadow: none;
+            display: inline-block;
+            outline: none;
+            vertical-align: middle;
+            margin-bottom: 10px;
+            min-width: 100px;
+        }
+
+        select.revenue-grid-ctrl {
+            font-size: small;
+        }
+
+        button {
+            text-transform: uppercase;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            line-height: 36px;
+            height: 36px;
+            padding: 0 10px;
+            border: 1px solid;
+            font-size: small;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: none;
+            display: inline-block;
+            outline: none;
+            border-radius: 0;
+            vertical-align: middle;
+        }
+
+        h3{
+            font-size: large;
+            margin-bottom: 30px;
+        }
+
+        .box-settings-input-hodler-item{
+            display: inline-block;
+            vertical-align: middle;            
+
+            .metric{
+                margin-top: 15px;
+                list-style: none;
+                padding: 0;
+                margin-left: 0;
+                li{
+                    display: inline-block;
+                    margin-right: 15px;
+                    vertical-align: middle; 
+                    p {
+                        margin: 0;
+                    }
+                }
+            }
+        }
+
+    }
+    &-grid {
+        &-menu {
+            height: 36px;
+            width: 36px;
+            text-align: center;
+            line-height: 36px;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            border-radius: 50%;
+            overflow: hidden;
+
+            &:focus,
+            &:hover,
+            &:active {
+                background: rgba(0, 0, 0, 0.15);
+            }
+        }
+        table{
+            width:100%;
+            table-layout: fixed;
+            border: none;
+            box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);
+            thead,
+            tbody,
+            thead tr,
+            tbody tr {
+                width:100%;
+            }
+            thead{
+                border: none;
+            }
+            tbody{
+                border: none;
+            }
+            thead tr th{
+                background: #d7edff;
+                font-size: small;
+                color: rgba(0, 0, 0, 0.87);
+            }
+            thead tr th:first-child,
+            tbody tr td:first-child {
+                width:80px;
+                font-size: small;
+                font-weight: bold;
+                padding-left: 10px;
+            }            
+            thead tr th {
+                text-align: center;
+                padding: 5px 5px 5px 0;
+                line-height: 36px;
+                
+            }
+            tbody tr {
+                background: #FFF;
+            }
+            tbody tr:nth-child(2n + 2) {
+                background: #FAFAFA;
+            }
+            tbody tr td {                
+                padding: 5px 5px 5px 0;
+                line-height: 36px;
+                font-size: small;
+                text-align: center;
+
+                input{
+                    margin: 0;
+                    padding: 0 5px;
+                    line-height: 26px;
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+            tbody tr.empty-row {
+                text-align: center;
+            }
+            &.w12 {
+                thead tr th:not(:first-child),
+                tbody tr td:not(:first-child) {
+                    width: calc((100% - 80px) / 12);
+                }
+            }
+            &.w4 {
+                thead tr th:not(:first-child),
+                tbody tr td:not(:first-child) {
+                    width: calc((100% - 80px) / 4);
+                }
+            }
+            &.w1 {
+                thead tr th:not(:first-child),
+                tbody tr td:not(:first-child) {
+                    width: calc(100% - 80px);
+                }
+            }
+        }
+    }
+}
