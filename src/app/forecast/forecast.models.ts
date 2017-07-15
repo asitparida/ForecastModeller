@@ -61,6 +61,8 @@ export class ForecastUnitModel {
     ITER_INDEX_MONTH: number;
     ITER_INDEX_QUARTER: number;
     ITER_INDEX_YEAR: number;
+    MANUAL_VALUE: number;
+    MANUAL_INCREMENT: number;
     constructor(index, year?) {
         this.MONTH = index;
         this.LABEL = MONTHNAMES[index];
@@ -68,6 +70,8 @@ export class ForecastUnitModel {
         this.YEAR = year;
         this.GROWTH_INCREMENT = 0;
         this.VALUE = 0;
+        this.MANUAL_INCREMENT = 0;
+        this.MANUAL_VALUE = 0;
     }
 }
 
@@ -77,13 +81,30 @@ export class ForecastYear {
     YEAR: number;
     MONTHS: ForecastUnitModel[] = [];
     QUARTERS: ForecastUnitModel[] = [];
+    MANUAL_INCREMENT: number;
+    MANUAL_VALUE: number;
     constructor() {
         MONTHNAMES.forEach((MONTH, index) => {
             const model = new ForecastUnitModel(index);
             this.MONTHS.push(model);
         });
+        this.MANUAL_INCREMENT = 0;
+        this.MANUAL_VALUE = 0;
     }
-    getXlsDump() {
-        // let data = {}
-    }
+}
+
+export interface XlsUploadRow {
+    YEAR: number;
+    JAN: number;
+    FEB: number;
+    MAR: number;
+    APR: number;
+    MAY: number;
+    JUN: number;
+    JUL: number;
+    AUG: number;
+    SEP: number;
+    OCT: number;
+    NOV: number;
+    DEC: number;
 }
