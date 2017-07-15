@@ -56,7 +56,8 @@ $color: #303030;
             padding: 0 45px 45px 45px;
         }
         .toggle-ctrl {
-            margin-right: 45px;
+            margin-left: 30px;
+            margin-bottom: 10px;
             position: relative;
             top: 3px;
             label {
@@ -142,6 +143,35 @@ $color: #303030;
                     width: 49%;
                     padding: 0 15px;
                     display: inline-block;
+                    &.w100 {
+                        width:100%;
+                        label {
+                            margin-top: 10px;
+                            display: inline-block;
+                            width:49%;
+                            &.medium{
+                            }
+                            &.radioLabel{
+                                font-weight: normal;
+                                font-size: medium;
+                                color: #303030;
+                                text-transform: capitalize;
+                            }
+                            &.inline-block {
+                                display: inline-block;
+                            }
+                            &.w100 {
+                                width:100%;
+                            }
+                            input[type="radio"] {
+                                width:24px;
+                                height: 24px;
+                                line-height: 24px;
+                                min-width: 24px;
+                                margin-right: 10px;
+                            }
+                        }
+                    }
                     select.revenue-ctrl,
                     input.revenue-ctrl {
                         width: 100%;
@@ -160,6 +190,7 @@ $color: #303030;
                         vertical-align: middle;
                         margin-bottom: 5px;
                         min-width: 100px;
+                        margin-left: 30px;
                         color: #303030;
                         letter-spacing: 1px;
                     }
@@ -198,6 +229,7 @@ $color: #303030;
         }
         select.revenue-grid-ctrl {
             font-size: small;
+            margin-left: 30px;
         }
         button {
             text-transform: uppercase;
@@ -240,6 +272,56 @@ $color: #303030;
         }
     }
     &-grid {
+        &-manual-menu {
+            height: 48px;
+            margin: 10px 0;
+            background: #F0F0F0;
+            .revenue-grid-ctrl {
+                margin-top: 6px;
+                margin-right: 6px;
+            }
+            input {
+                    font-size: small;
+                    width: 100px;
+                    margin-top: 1px;
+                    margin-bottom: 0;
+            }
+            &-item {
+                height: 48px;
+                width: 48px;
+                display: inline-block;
+                line-height: 48px;
+                text-align: center;
+                margin: 0 auto;
+                vertical-align: middle;
+                padding:0;
+                cursor: pointer;
+                &:focus,
+                &:hover,
+                &:active {
+                    background: rgba(0, 0, 0, 0.15);
+                }
+                /deep/ button.xl-file-ctrl {
+                    background: none;
+                    color: inherit;
+                    padding: 0;
+                    margin: 0;
+                    line-height: 48px;
+                    width: 48px;
+                    min-width: auto;
+                    border: none;
+                    cursor: pointer;
+                    input {
+                        cursor: pointer;
+                    }
+                    &:focus,
+                    &:hover,
+                    &:active {
+                        background: rgba(0, 0, 0, 0.15);
+                    }
+                }
+            }
+        }
         &-menu {
             height: 36px;
             width: 36px;
@@ -255,25 +337,6 @@ $color: #303030;
             &:hover,
             &:active {
                 background: rgba(0, 0, 0, 0.15);
-            }
-            /deep/ button.xl-file-ctrl {
-                background: none;
-                color: inherit;
-                padding: 0;
-                margin: 0;
-                line-height: 36px;
-                width: 36px;
-                min-width: auto;
-                border: none;
-                cursor: pointer;
-                input {
-                    cursor: pointer;
-                }
-                &:focus,
-                &:hover,
-                &:active {
-                    background: rgba(0, 0, 0, 0.15);
-                }
             }
         }
         table {
@@ -304,6 +367,9 @@ $color: #303030;
                 font-size: small;
                 font-weight: bold;
                 padding-left: 10px;
+                &.isManual {
+                    padding-left: 0;
+                }
             }
             thead tr th {
                 text-align: center;

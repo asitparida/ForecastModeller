@@ -22,7 +22,8 @@ export enum GrowthType {
 
 export enum ViewOption {
     INCREMENTS,
-    RESULTS
+    RESULTS,
+    PERCENT
 }
 
 export const MONTHNAMES: any[] = [
@@ -56,33 +57,42 @@ export class ForecastUnitModel {
     MONTH: number;
     LABEL: string;
     VALUE: number;
+    VALUE_PERCENT: number;
+    INCREMENT: number;
+    INCREMENT_PERCENT: number;
     YEAR: number;
-    GROWTH_INCREMENT: number;
     ITER_INDEX_MONTH: number;
     ITER_INDEX_QUARTER: number;
     ITER_INDEX_YEAR: number;
     MANUAL_VALUE: number;
     MANUAL_INCREMENT: number;
+    MANUAL_INCREMENT_PERCENT: number;
     constructor(index, year?) {
         this.MONTH = index;
         this.LABEL = MONTHNAMES[index];
         this.VALUE = 0;
         this.YEAR = year;
-        this.GROWTH_INCREMENT = 0;
+        this.INCREMENT = 0;
         this.VALUE = 0;
         this.MANUAL_INCREMENT = 0;
         this.MANUAL_VALUE = 0;
+        this.MANUAL_INCREMENT_PERCENT  = 0;
+        this.INCREMENT_PERCENT = 0;
+        this.VALUE_PERCENT = 0;
     }
 }
 
 export class ForecastYear {
     VALUE: number;
-    GROWTH_INCREMENT: number;
+    VALUE_PERCENT: number;
+    INCREMENT: number;
+    INCREMENT_PERCENT: number;
     YEAR: number;
     MONTHS: ForecastUnitModel[] = [];
     QUARTERS: ForecastUnitModel[] = [];
     MANUAL_INCREMENT: number;
     MANUAL_VALUE: number;
+    MANUAL_INCREMENT_PERCENT: number;
     constructor() {
         MONTHNAMES.forEach((MONTH, index) => {
             const model = new ForecastUnitModel(index);
@@ -90,6 +100,11 @@ export class ForecastYear {
         });
         this.MANUAL_INCREMENT = 0;
         this.MANUAL_VALUE = 0;
+        this.MANUAL_INCREMENT_PERCENT = 0;
+        this.INCREMENT_PERCENT = 0;
+        this.VALUE_PERCENT = 0;
+        this.VALUE = 0;
+        this.INCREMENT = 0;
     }
 }
 
