@@ -66,6 +66,7 @@ export class ForecastUnitModel {
     ITER_INDEX_YEAR: number;
     MANUAL_VALUE: number;
     MANUAL_INCREMENT: number;
+    MANUAL_INCREMENT_PERCENT: number;
     constructor(index, year?) {
         this.MONTH = index;
         this.LABEL = MONTHNAMES[index];
@@ -75,6 +76,7 @@ export class ForecastUnitModel {
         this.VALUE = 0;
         this.MANUAL_INCREMENT = 0;
         this.MANUAL_VALUE = 0;
+        this.MANUAL_INCREMENT_PERCENT  = 0;
         this.INCREMENT_PERCENT = 0;
         this.VALUE_PERCENT = 0;
     }
@@ -90,6 +92,7 @@ export class ForecastYear {
     QUARTERS: ForecastUnitModel[] = [];
     MANUAL_INCREMENT: number;
     MANUAL_VALUE: number;
+    MANUAL_INCREMENT_PERCENT: number;
     constructor() {
         MONTHNAMES.forEach((MONTH, index) => {
             const model = new ForecastUnitModel(index);
@@ -97,6 +100,7 @@ export class ForecastYear {
         });
         this.MANUAL_INCREMENT = 0;
         this.MANUAL_VALUE = 0;
+        this.MANUAL_INCREMENT_PERCENT = 0;
         this.INCREMENT_PERCENT = 0;
         this.VALUE_PERCENT = 0;
         this.VALUE = 0;

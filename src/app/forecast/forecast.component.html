@@ -11,10 +11,10 @@
                     <h3>Revenues Forecast</h3>
                 </div>
                 <div class="float-right">
-                    <select class="revenue-grid-ctrl float-right" [(ngModel)]="viewSelected" (change)="onDataViewChange()">
+                    <select class="revenue-grid-ctrl float-right" [(ngModel)]="viewSelected" (change)="onDataViewChange()" [hidden]="isManual">
                         <option *ngFor="let item of viewOptions" [ngValue]="item.value">{{item.label}}</option>
                     </select>
-                    <div class="float-right toggle-ctrl" [hidden]="true">
+                    <div class="float-right toggle-ctrl">
                         <label>Manual Mode</label>
                         <ui-switch color="#106CC8" [(ngModel)]="isManual" (change)="onManualModeChange()"></ui-switch>
                     </div>
@@ -31,18 +31,24 @@
             <chart style="width:100%;" [options]="chartOptionsForYearlyView" [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.YEARLY"></chart>
         </div>
         <div class="revenues-actuals-grid">
+            <div class="revenues-actuals-grid-manual-menu" [hidden]="!isManual">
+                <div class="revenues-actuals-grid-manual-menu-item">
+                    <app-xl-file-ctrl label="" (xlsContentUpdated)="onXlsFileContentUpdate($event)"></app-xl-file-ctrl>
+                </div>
+                <div class="revenues-actuals-grid-manual-menu-item" title="Save Data" (click)="saveManualData()">
+                    <i class="fa fa-floppy-o"></i>
+                </div>
+                <input type="number" [(ngModel)]="manualStartValue" [hidden]="editViewSelected === VIEW_OPTIONS.RESULTS" />
+                <select class="revenue-grid-ctrl float-right" [(ngModel)]="editViewSelected" (change)="onDataViewChange()">
+                        <option *ngFor="let item of viewOptions" [ngValue]="item.value">{{item.label}}</option>
+                </select>
+            </div>
             <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.MONTHLY" class="w12">
                 <thead>
                     <tr>
                         <th>
                             <div class="revenues-actuals-grid-menu" (click)="showSliderMenu = !showSliderMenu" [hidden]="isManual">
                                 <i class="fa fa-bars"></i>
-                            </div>
-                            <div class="revenues-actuals-grid-menu" [hidden]="!isManual">
-                                <app-xl-file-ctrl label="" (xlsContentUpdated)="onXlsFileContentUpdate($event)"></app-xl-file-ctrl>
-                            </div>
-                            <div class="revenues-actuals-grid-menu" title="Save Data" (click)="saveManualData()" [hidden]="!isManual">
-                                <i class="fa fa-floppy-o"></i>
                             </div>
                         </th>
                         <th>JAN</th>
@@ -73,11 +79,12 @@
                         <td *ngFor="let model of year.MONTHS">
                             <span *ngIf="!isManual">
                                 <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
-                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
-                                <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
+                            <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
+                            <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
                             </span>
-                            <input type="number" *ngIf="isManual && viewSelected === VIEW_OPTIONS.RESULTS" [(ngModel)]="model.MANUAL_VALUE" />
-                            <input type="number" *ngIf="isManual && viewSelected === VIEW_OPTIONS.INCREMENTS" [(ngModel)]="model.MANUAL_INCREMENT" />
+                            <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.RESULTS" [(ngModel)]="model.MANUAL_VALUE" />
+                            <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.INCREMENTS" [(ngModel)]="model.MANUAL_INCREMENT" />
+                            <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.PERCENT" [(ngModel)]="model.MANUAL_INCREMENT_PERCENT" />
                         </td>
                     </tr>
                 </tbody>

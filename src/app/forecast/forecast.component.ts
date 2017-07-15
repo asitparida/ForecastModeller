@@ -78,6 +78,7 @@ export class ForecastComponent {
 
     viewSelected = ViewOption.RESULTS;
     chartViewSelected = PeriodType.MONTHLY;
+    editViewSelected = ViewOption.RESULTS;
 
     VIEW_OPTIONS = ViewOption;
     PERIOD_TYPE_OPTIONS = PeriodType;
@@ -329,6 +330,9 @@ export class ForecastComponent {
         const rows: any[] = $event[0].data;
         if (rows) {
             let lastValue = rows[0]['JAN'];
+            if (this.editViewSelected === ViewOption.RESULTS) {
+                this.manualStartValue = lastValue;
+            }
             this
                 .forecastYears
                 .forEach((year: ForecastYear) => {
@@ -339,62 +343,78 @@ export class ForecastComponent {
                         year
                             .MONTHS
                             .forEach((model: ForecastUnitModel) => {
-                                model.MANUAL_VALUE = parseFloat(row[MONTHNAMES[model.MONTH]]);
-                                // model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
+                                if (this.editViewSelected === ViewOption.RESULTS) {
+                                    model.MANUAL_VALUE = parseFloat(row[MONTHNAMES[model.MONTH]]);
+                                } else if (this.editViewSelected === ViewOption.INCREMENTS) {
+                                    model.MANUAL_INCREMENT = parseFloat(row[MONTHNAMES[model.MONTH]]);
+                                } else if (this.editViewSelected === ViewOption.PERCENT) {
+                                    model.MANUAL_INCREMENT_PERCENT = parseFloat(row[MONTHNAMES[model.MONTH]]);
+                                }
                             });
                     }
                 });
         }
     }
 
-    onManualSliderApplied() {
-        let lastValue = 0;
-        this
-            .forecastYears
-            .forEach((year: ForecastYear, yearIndex: number) => {
-                year
-                    .MONTHS
-                    .forEach((model: ForecastUnitModel, monthIndex: number) => {
-                        let applyInitial = false;
-                        if (this.manualApplyAcross === 'all') {
-                            if (yearIndex === 0 && monthIndex === 0) {
-                                applyInitial = true;
-                            }
-                        } else {
-                            if (this.manualCurrentRowYear === year.YEAR && monthIndex === 0) {
-                                applyInitial = true;
-                            }
-                        }
-                        if (applyInitial) {
-                            model.MANUAL_VALUE = this.manualStartValue;
-                        } else {
-                            if (this.manualApplyAcross === 'all' || (this.manualApplyAcross === 'row' && this.manualCurrentRowYear <= year.YEAR)) {
-                                // if (this.manualGrowthType === GrowthType.ABSOLUTE) {
-                                //     model.MANUAL_INCREMENT = this.manualGrowth;
-                                // }
-                                // model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
-                            }
-                        }
-                        lastValue = model.MANUAL_VALUE;
-                    });
-            });
-    }
+    // onManualSliderApplied() {
+    //     let lastValue = 0;
+    //     this
+    //         .forecastYears
+    //         .forEach((year: ForecastYear, yearIndex: number) => {
+    //             year
+    //                 .MONTHS
+    //                 .forEach((model: ForecastUnitModel, monthIndex: number) => {
+    //                     let applyInitial = false;
+    //                     if (this.manualApplyAcross === 'all') {
+    //                         if (yearIndex === 0 && monthIndex === 0) {
+    //                             applyInitial = true;
+    //                         }
+    //                     } else {
+    //                         if (this.manualCurrentRowYear === year.YEAR && monthIndex === 0) {
+    //                             applyInitial = true;
+    //                         }
+    //                     }
+    //                     if (applyInitial) {
+    //                         model.MANUAL_VALUE = this.manualStartValue;
+    //                     } else {
+    //                         if (this.manualApplyAcross === 'all' || (this.manualApplyAcross === 'row' && this.manualCurrentRowYear <= year.YEAR)) {
+    //                             // if (this.manualGrowthType === GrowthType.ABSOLUTE) {
+    //                             //     model.MANUAL_INCREMENT = this.manualGrowth;
+    //                             // }
+    //                             // model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
+    //                         }
+    //                     }
+    //                     lastValue = model.MANUAL_VALUE;
+    //                 });
+    //         });
+    // }
 
     saveManualData() {
-        let lastValue = 0;
+        let lastValue = this.manualStartValue;
         this
             .forecastYears
             .forEach((year: ForecastYear, yearIndex: number) => {
                 year
                     .MONTHS
                     .forEach((model: ForecastUnitModel, monthIndex: number) => {
-                        if (yearIndex === 0 && monthIndex === 0) {
-                            model.MANUAL_INCREMENT = 0;
-                        } else {
+                        if (this.editViewSelected === ViewOption.RESULTS) {
                             model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
+                            model.MANUAL_INCREMENT_PERCENT = ((model.MANUAL_VALUE  - lastValue) / lastValue) * 10000;
+                            model.MANUAL_INCREMENT_PERCENT = Math.round(model.MANUAL_INCREMENT_PERCENT) / 100;
+                        } else if (this.editViewSelected === ViewOption.INCREMENTS) {
+                            model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
+                            model.MANUAL_INCREMENT_PERCENT = ((model.MANUAL_VALUE  - lastValue) / lastValue) * 10000;
+                            model.MANUAL_INCREMENT_PERCENT = Math.round(model.MANUAL_INCREMENT_PERCENT) / 100;
+                        } else if (this.editViewSelected === ViewOption.PERCENT) {
+                            model.MANUAL_INCREMENT = (lastValue * model.MANUAL_INCREMENT_PERCENT) * 0.01;
+                            model.MANUAL_INCREMENT = Math.round(model.MANUAL_INCREMENT * 100) / 100;
+                            model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
+                            model.MANUAL_VALUE = Math.round(model.MANUAL_VALUE * 100) / 100;
                         }
+                        model.INCREMENT_PERCENT = model.MANUAL_INCREMENT_PERCENT;
                         model.INCREMENT = model.MANUAL_INCREMENT;
                         model.VALUE = model.MANUAL_VALUE;
+                        lastValue = model.MANUAL_VALUE;
                     });
             });
         this.processForQuarterData();
@@ -437,7 +457,7 @@ export class ForecastComponent {
     }
 
     applyManualProps() {
-        this.onManualSliderApplied();
+        // this.onManualSliderApplied();
         this.processForQuarterData();
         this.processForYearlyData();
         this.processForMaps();
