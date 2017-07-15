@@ -3,19 +3,25 @@
         <div class="revenues-actuals-container-tabs-tab" (click)="selectView(PERIOD_TYPE_OPTIONS.MONTHLY)" [class.active]="chartViewSelected === PERIOD_TYPE_OPTIONS.MONTHLY">Monthly</div>
         <div class="revenues-actuals-container-tabs-tab" (click)="selectView(PERIOD_TYPE_OPTIONS.QUARTERLY)" [class.active]="chartViewSelected === PERIOD_TYPE_OPTIONS.QUARTERLY">Quarterly</div>
         <div class="revenues-actuals-container-tabs-tab" (click)="selectView(PERIOD_TYPE_OPTIONS.YEARLY)" [class.active]="chartViewSelected === PERIOD_TYPE_OPTIONS.YEARLY">Yearly</div>
-    </div>b
+    </div>
     <div class="revenues-actuals-container-content">
         <div class="row">
-            <div class="col-6 padAdjust">
-                <h3>Revenues Forecast</h3>
-            </div>
-            <div class="col-6 padAdjust">
-                <select class="revenue-grid-ctrl float-right" [(ngModel)]="viewSelected" (change)="onDataViewChange()">
+            <div class="col-12 padAdjust">
+                <div class="float-left">
+                    <h3>Revenues Forecast</h3>
+                </div>
+                <div class="float-right">
+                    <select class="revenue-grid-ctrl float-right" [(ngModel)]="viewSelected" (change)="onDataViewChange()">
                     <option *ngFor="let item of viewOptions" [ngValue]="item.value">{{item.label}}</option>
                 </select>
-                <div class="float-right toggle-ctrl">
-                    <label> Show Chart</label>
-                    <ui-switch color="#106CC8" [(ngModel)]="showCharts"></ui-switch>
+                    <div class="float-right toggle-ctrl">
+                        <label>Manual Mode</label>
+                        <ui-switch color="#106CC8" [(ngModel)]="isManual" (change)="onManualModeChange()"></ui-switch>
+                    </div>
+                    <div class="float-right toggle-ctrl">
+                        <label> Show Chart</label>
+                        <ui-switch color="#106CC8" [(ngModel)]="showCharts"></ui-switch>
+                    </div>
                 </div>
             </div>
         </div>
@@ -29,8 +35,14 @@
                 <thead>
                     <tr>
                         <th>
-                            <div class="revenues-actuals-grid-menu" (click)="showSliderMenu = !showSliderMenu">
+                            <div class="revenues-actuals-grid-menu" (click)="showSliderMenu = !showSliderMenu" [hidden]="isManual">
                                 <i class="fa fa-bars"></i>
+                            </div>
+                            <div class="revenues-actuals-grid-menu" [hidden]="!isManual">
+                                <app-xl-file-ctrl label="" (xlsContentUpdated)="onXlsFileContentUpdate($event)"></app-xl-file-ctrl>
+                            </div>
+                            <div class="revenues-actuals-grid-menu" title="Save Data" (click)="saveManualData()" [hidden]="!isManual">
+                                <i class="fa fa-floppy-o"></i>
                             </div>
                         </th>
                         <th>JAN</th>
@@ -58,7 +70,8 @@
                                 <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
                             <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{model.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
                             </span>
-                            <input type="text" *ngIf="isManual" [(ngModel)]="model.VALUE" />
+                            <input type="number" *ngIf="isManual && viewSelected === VIEW_OPTIONS.RESULTS" [(ngModel)]="model.MANUAL_VALUE" />
+                            <input type="number" *ngIf="isManual && viewSelected === VIEW_OPTIONS.INCREMENTS" [(ngModel)]="model.MANUAL_INCREMENT" />
                         </td>
                     </tr>
                 </tbody>

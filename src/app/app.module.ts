@@ -9,6 +9,7 @@ import { AppComponent } from './app.component';
 import { ForecastComponent } from './forecast/forecast.component';
 import { CurrencyDelimitedWithCommaPipe } from './currency-delimited.pipe';
 import { ChartsInitializer } from './forecast/forecast.helper';
+import { XlFileComponent } from './xl-file/xl-file.component';
 
 declare var require: any;
 
@@ -22,7 +23,8 @@ ChartsInitializer.Initialize(HighChartsFactory());
   declarations: [
     AppComponent,
     ForecastComponent,
-    CurrencyDelimitedWithCommaPipe
+    CurrencyDelimitedWithCommaPipe,
+    XlFileComponent
   ],
   imports: [
     UiSwitchModule,
