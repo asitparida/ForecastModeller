@@ -12,9 +12,9 @@
                 </div>
                 <div class="float-right">
                     <select class="revenue-grid-ctrl float-right" [(ngModel)]="viewSelected" (change)="onDataViewChange()">
-                    <option *ngFor="let item of viewOptions" [ngValue]="item.value">{{item.label}}</option>
-                </select>
-                    <div class="float-right toggle-ctrl">
+                        <option *ngFor="let item of viewOptions" [ngValue]="item.value">{{item.label}}</option>
+                    </select>
+                    <div class="float-right toggle-ctrl" [hidden]="true">
                         <label>Manual Mode</label>
                         <ui-switch color="#106CC8" [(ngModel)]="isManual" (change)="onManualModeChange()"></ui-switch>
                     </div>
@@ -64,11 +64,17 @@
                         <td colspan="13" *ngIf="rows.length == 0 && isManual == false"> No Records for now</td>
                     </tr>
                     <tr *ngFor="let year of forecastYears">
-                        <td>{{year.YEAR}}</td>
+                        <td [class.isManual]="isManual && false">
+                            <!-- <div class="revenues-actuals-grid-menu" (click)="manualCurrentRowYear = year.YEAR;showSliderMenu = !showSliderMenu" [hidden]="!isManual">
+                                <i class="fa fa-bars"></i>
+                            </div> -->
+                            {{year.YEAR}}
+                        </td>
                         <td *ngFor="let model of year.MONTHS">
                             <span *ngIf="!isManual">
-                                <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
-                            <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{model.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
                             </span>
                             <input type="number" *ngIf="isManual && viewSelected === VIEW_OPTIONS.RESULTS" [(ngModel)]="model.MANUAL_VALUE" />
                             <input type="number" *ngIf="isManual && viewSelected === VIEW_OPTIONS.INCREMENTS" [(ngModel)]="model.MANUAL_INCREMENT" />
@@ -98,8 +104,9 @@
                         <td>{{year.YEAR}}</td>
                         <td *ngFor="let model of year.QUARTERS">
                             <span>
-                                <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
-                            <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{model.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
                             </span>
                         </td>
                     </tr>
@@ -124,8 +131,9 @@
                         <td>{{year.YEAR}}</td>
                         <td>
                             <span>
-                                <span [hidden]="viewSelected === VIEW_OPTIONS.INCREMENTS">$ {{year.VALUE | currencyDelimitedWithComma}}</span>
-                            <span [hidden]="viewSelected === VIEW_OPTIONS.RESULTS">$ {{year.GROWTH_INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">$ {{year.VALUE | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{year.INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{year.INCREMENT_PERCENT}} %</span>
                             </span>
                         </td>
                     </tr>
@@ -139,35 +147,59 @@
             <div class="revenues-actuals-container-slider-close" (click)="showSliderMenu = false">
                 <i class="fa fa-close"></i>
             </div>
-            <div class="revenues-actuals-container-slider-inner-item">
-                <label>Select Growth Value</label>
-                <select class="revenue-ctrl" [(ngModel)]="growthPeriod" title="Select Growth Period">
-                    <option *ngFor="let item of growthPeriodOptions" [ngValue]="item.value">{{item.label}}</option>
-                </select>
-            </div>
-            <div class="revenues-actuals-container-slider-inner-item">
-                <label>Enter Intial Value</label>
-                <input class="revenue-ctrl" [(ngModel)]="startValue" type="number" title="Enter Initial Value" />
-            </div>
-            <div class="revenues-actuals-container-slider-inner-item">
-                <label>Select Growth Type</label>
-                <select class="revenue-ctrl" [(ngModel)]="growthType" title="Select Growth Type">
-                        <option *ngFor="let item of growthTypeOptions" [ngValue]="item.value">{{item.label}}</option>
+            <div class="revenues-actuals-container-slider-inner-items-holder" *ngIf="!isManual">
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Select Growth Value</label>
+                    <select class="revenue-ctrl" [(ngModel)]="growthPeriod" title="Select Growth Period">
+                        <option *ngFor="let item of growthPeriodOptions" [ngValue]="item.value">{{item.label}}</option>
                     </select>
+                </div>
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Enter Intial Value</label>
+                    <input class="revenue-ctrl" [(ngModel)]="startValue" type="number" title="Enter Initial Value" />
+                </div>
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Select Growth Type</label>
+                    <select class="revenue-ctrl" [(ngModel)]="growthType" title="Select Growth Type">
+                            <option *ngFor="let item of growthTypeOptions" [ngValue]="item.value">{{item.label}}</option>
+                        </select>
+                </div>
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Select Growth Value</label>
+                    <input class="revenue-ctrl" [(ngModel)]="growth" type="number" title="Enter Growth Value" />
+                </div>
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Enter Start Date</label>
+                    <input class="revenue-ctrl" [(ngModel)]="startDateStr" type="date" title="Enter Start Date" />
+                </div>
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Enter End Date</label>
+                    <input class="revenue-ctrl" [(ngModel)]="endDateStr" type="date" title="Enter End Date" />
+                </div>
+                <button class="btn btn-primary revenue-ctrl" (click)="process()">Recalculate</button>
             </div>
-            <div class="revenues-actuals-container-slider-inner-item">
-                <label>Select Growth Value</label>
-                <input class="revenue-ctrl" [(ngModel)]="growth" type="number" title="Enter Growth Value" />
+            <div class="revenues-actuals-container-slider-inner-items-holder" *ngIf="isManual">
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Enter Intial Value</label>
+                    <input class="revenue-ctrl" [(ngModel)]="manualStartValue" type="number" title="Enter Initial Value" />
+                </div>
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Select Growth Type</label>
+                    <select class="revenue-ctrl" [(ngModel)]="manualGrowthType" title="Select Growth Type">
+                            <option *ngFor="let item of growthTypeOptions" [ngValue]="item.value">{{item.label}}</option>
+                        </select>
+                </div>
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Select Growth Value</label>
+                    <input class="revenue-ctrl" [(ngModel)]="manualGrowth" type="number" title="Enter Growth Value" />
+                </div>
+                <div class="revenues-actuals-container-slider-inner-item w100">
+                    <label class="inline-block w100">Apply across</label>
+                    <label class="radioLabel"><input class="revenue-ctrl" [(ngModel)]="manualApplyAcross" value="row" type="radio" />{{manualCurrentRowYear}}</label>
+                    <label class="radioLabel"><input class="revenue-ctrl" [(ngModel)]="manualApplyAcross" value="all" type="radio" />All Years</label>
+                </div>
+                <button class="btn btn-primary revenue-ctrl" (click)="applyManualProps()">Apply</button>
             </div>
-            <div class="revenues-actuals-container-slider-inner-item">
-                <label>Enter Start Date</label>
-                <input class="revenue-ctrl" [(ngModel)]="startDateStr" type="date" min="2016-01-01" max="2021-12-31" title="Enter Start Date" />
-            </div>
-            <div class="revenues-actuals-container-slider-inner-item">
-                <label>Enter End Date</label>
-                <input class="revenue-ctrl" [(ngModel)]="endDateStr" type="date" min="2016-01-01" max="2021-12-31" title="Enter End Date" />
-            </div>
-            <button class="btn btn-primary revenue-ctrl" (click)="process()">Recalculate</button>
         </div>
     </div>
 </div>

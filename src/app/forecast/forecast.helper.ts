@@ -30,7 +30,7 @@ export module ChartsHelper {
         // );
         const series = [{
             data: models.map((model: ForecastUnitModel) => {
-                return ViewSelected === ViewOption.RESULTS ? model.VALUE : model.GROWTH_INCREMENT;
+                return ViewSelected === ViewOption.RESULTS ? model.VALUE : model.INCREMENT;
             }),
             name: title
         }];
@@ -110,7 +110,7 @@ export module ChartsHelper {
         });
         const series = [{
             data: models.map((model: ForecastUnitModel) => {
-                return ViewSelected === ViewOption.RESULTS ? model.VALUE : model.GROWTH_INCREMENT;
+                return ViewSelected === ViewOption.RESULTS ? model.VALUE : model.INCREMENT;
             }),
             name: title
         }];
@@ -151,7 +151,7 @@ export module ChartsHelper {
         const title = `Estimated ${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : 'Actuals'} ${TimePeriod} On ${TimePeriod}`;
         const series = [{
             data: ForecastYears.map((model: ForecastYear) => {
-                return ViewSelected === ViewOption.RESULTS ? model.VALUE : model.GROWTH_INCREMENT;
+                return ViewSelected === ViewOption.RESULTS ? model.VALUE : model.INCREMENT;
             }),
             name: title
         }];

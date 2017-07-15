@@ -142,6 +142,35 @@ $color: #303030;
                     width: 49%;
                     padding: 0 15px;
                     display: inline-block;
+                    &.w100 {
+                        width:100%;
+                        label {
+                            margin-top: 10px;
+                            display: inline-block;
+                            width:49%;
+                            &.medium{
+                            }
+                            &.radioLabel{
+                                font-weight: normal;
+                                font-size: medium;
+                                color: #303030;
+                                text-transform: capitalize;
+                            }
+                            &.inline-block {
+                                display: inline-block;
+                            }
+                            &.w100 {
+                                width:100%;
+                            }
+                            input[type="radio"] {
+                                width:24px;
+                                height: 24px;
+                                line-height: 24px;
+                                min-width: 24px;
+                                margin-right: 10px;
+                            }
+                        }
+                    }
                     select.revenue-ctrl,
                     input.revenue-ctrl {
                         width: 100%;
@@ -198,6 +227,7 @@ $color: #303030;
         }
         select.revenue-grid-ctrl {
             font-size: small;
+            margin-left: 30px;
         }
         button {
             text-transform: uppercase;
@@ -304,6 +334,9 @@ $color: #303030;
                 font-size: small;
                 font-weight: bold;
                 padding-left: 10px;
+                &.isManual {
+                    padding-left: 0;
+                }
             }
             thead tr th {
                 text-align: center;

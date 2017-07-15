@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import { Component } from '@angular/core';
 import {
     SAMPLE,
     GrowthType,
@@ -8,7 +8,7 @@ import {
     ViewOption,
     MONTHNAMES
 } from './forecast.models';
-import {ChartsHelper} from './forecast.helper';
+import { ChartsHelper } from './forecast.helper';
 
 function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
@@ -21,20 +21,26 @@ function onlyUnique(value, index, self) {
 })
 export class ForecastComponent {
 
-    isManual : Boolean = false;
-    rows : any[] = SAMPLE;
-    startDateStr : string;
-    endDateStr : string;
-    startValue : number;
-    growth : number;
-    growthType : GrowthType;
-    growthPeriod : PeriodType;
+    isManual: Boolean = false;
+    rows: any[] = SAMPLE;
+    startDateStr: string;
+    endDateStr: string;
+    startValue: number;
+    growth: number;
+    growthType: GrowthType;
+    growthPeriod: PeriodType;
 
-    showSliderMenu : Boolean = false;
+    manualStartValue: number;
+    manualGrowthType: GrowthType;
+    manualGrowth: number;
+    manualApplyAcross: string = 'all';
+    manualCurrentRowYear: number;
+
+    showSliderMenu: Boolean = false;
     chartOptionsForMonthlyView = null;
     chartOptionsForQuaterlyView = null;
     chartOptionsForYearlyView = null;
-    showCharts : Boolean = false;
+    showCharts: Boolean = false;
 
     viewOptions = [
         {
@@ -43,6 +49,9 @@ export class ForecastComponent {
         }, {
             value: ViewOption.INCREMENTS,
             label: 'Increments'
+        }, {
+            value: ViewOption.PERCENT,
+            label: 'Percent'
         }
     ];
     growthPeriodOptions = [
@@ -72,23 +81,27 @@ export class ForecastComponent {
 
     VIEW_OPTIONS = ViewOption;
     PERIOD_TYPE_OPTIONS = PeriodType;
+    GROWTH_TYPE_OPTIONS = GrowthType;
 
-    private startDate : Date;
-    private endDate : Date;
+    private startDate: Date;
+    private endDate: Date;
 
     private forecastStartDate = new Date('1/15/2016');
     private forecastEndDate = new Date('1/15/2022');
 
-    forecastYears : ForecastYear[] = [];
+    forecastYears: ForecastYear[] = [];
 
     constructor() {
         this.forecastYears = [];
-        this.startValue = 0;
-        this.startDateStr = '2016-1-15';
+        this.startValue = 100;
+        this.startDateStr = '2016-01-15';
         this.endDateStr = '2021-12-15';
         this.growth = 10;
         this.growthType = GrowthType.PERCENT;
         this.growthPeriod = PeriodType.MONTHLY;
+        this.manualGrowth = 0;
+        this.manualGrowthType = GrowthType.ABSOLUTE;
+        this.manualStartValue = 0;
         this.process();
     }
 
@@ -99,9 +112,9 @@ export class ForecastComponent {
     }
 
     processForTimePeriod() {
-        let proceed : Boolean = true;
-        const start : Date = new Date(this.forecastStartDate);
-        const monthModels : ForecastUnitModel[] = [];
+        let proceed: Boolean = true;
+        const start: Date = new Date(this.forecastStartDate);
+        const monthModels: ForecastUnitModel[] = [];
         while (proceed) {
             const model = new ForecastUnitModel(start.getMonth(), start.getFullYear());
             monthModels.push(model);
@@ -112,28 +125,28 @@ export class ForecastComponent {
                 proceed = false;
             }
         }
-        const years = monthModels.map((item : ForecastUnitModel) => {
+        const years = monthModels.map((item: ForecastUnitModel) => {
             return item.YEAR;
         }).filter(onlyUnique);
-        let MONTH_INDEXER : number = 0;
-        let QUARTER_INDEXER : number = 0;
-        let START_QUARTER_INCREMENT : Boolean = false;
-        let YEAR_INDEXER : number = 0;
-        let START_YEAR_INCREMENT : Boolean = false;
-        years.forEach((year : number) => {
+        let MONTH_INDEXER: number = 0;
+        let QUARTER_INDEXER: number = 0;
+        let START_QUARTER_INCREMENT: Boolean = false;
+        let YEAR_INDEXER: number = 0;
+        let START_YEAR_INCREMENT: Boolean = false;
+        years.forEach((year: number) => {
             const fy = new ForecastYear();
             fy.YEAR = year;
-            fy.MONTHS = monthModels.filter((item : ForecastUnitModel) => {
+            fy.MONTHS = monthModels.filter((item: ForecastUnitModel) => {
                 return item.YEAR === year;
             });
             fy
                 .MONTHS
-                .sort((a : ForecastUnitModel, b : ForecastUnitModel) => {
+                .sort((a: ForecastUnitModel, b: ForecastUnitModel) => {
                     return a.MONTH - b.MONTH;
                 });
             fy
                 .MONTHS
-                .forEach((month : ForecastUnitModel) => {
+                .forEach((month: ForecastUnitModel) => {
                     month.ITER_INDEX_MONTH = MONTH_INDEXER;
                     month.ITER_INDEX_YEAR = Math.ceil((MONTH_INDEXER + 1) / 12);
                     MONTH_INDEXER++;
@@ -157,26 +170,26 @@ export class ForecastComponent {
     }
 
     calculate() {
-        let monthModels : ForecastUnitModel[] = [];
+        let monthModels: ForecastUnitModel[] = [];
         this
             .forecastYears
-            .forEach((year : ForecastYear) => {
+            .forEach((year: ForecastYear) => {
                 monthModels = monthModels.concat(year.MONTHS);
             });
-        let lastValue : number = 0;
-        const startCursor = monthModels.find((model : ForecastUnitModel) => {
+        let lastValue: number = 0;
+        const startCursor = monthModels.find((model: ForecastUnitModel) => {
             return model.MONTH === this
                 .startDate
                 .getMonth() && model.YEAR === this
-                .startDate
-                .getFullYear();
+                    .startDate
+                    .getFullYear();
         });
-        const endCursor = monthModels.find((model : ForecastUnitModel) => {
+        const endCursor = monthModels.find((model: ForecastUnitModel) => {
             return model.MONTH === this
                 .endDate
                 .getMonth() && model.YEAR === this
-                .endDate
-                .getFullYear();
+                    .endDate
+                    .getFullYear();
         });
         if (this.growthPeriod === PeriodType.MONTHLY) {
             let cursor = startCursor.ITER_INDEX_MONTH;
@@ -187,13 +200,14 @@ export class ForecastComponent {
                 } else {
                     if (cursor > startCursor.ITER_INDEX_MONTH && cursor <= endCursor.ITER_INDEX_MONTH) {
                         if (this.growthType === GrowthType.ABSOLUTE) {
-                            monthModels[cursor].GROWTH_INCREMENT = this.growth;
+                            monthModels[cursor].INCREMENT = this.growth;
                         } else {
-                            monthModels[cursor].GROWTH_INCREMENT = ((lastValue * this.growth) / 100);
+                            monthModels[cursor].INCREMENT = ((lastValue * this.growth) / 100);
                         }
+                        monthModels[cursor].INCREMENT_PERCENT = this.growth;
                     }
-                    monthModels[cursor].GROWTH_INCREMENT = Math.ceil(monthModels[cursor].GROWTH_INCREMENT);
-                    monthModels[cursor].VALUE = lastValue + monthModels[cursor].GROWTH_INCREMENT;
+                    monthModels[cursor].INCREMENT = Math.round(monthModels[cursor].INCREMENT);
+                    monthModels[cursor].VALUE = lastValue + monthModels[cursor].INCREMENT;
                     lastValue = monthModels[cursor].VALUE;
                 }
                 cursor = cursor + 1;
@@ -210,18 +224,18 @@ export class ForecastComponent {
                 } else {
                     if (currentModel.ITER_INDEX_QUARTER > startCursor.ITER_INDEX_QUARTER && currentModel.ITER_INDEX_QUARTER <= endCursor.ITER_INDEX_QUARTER) {
                         if (currentModel.ITER_INDEX_MONTH <= endCursor.ITER_INDEX_MONTH) {
-                            if (this.growthType === GrowthType.ABSOLUTE) {
-                                monthModels[cursor].GROWTH_INCREMENT = this.growth;
-                            } else {
-                                monthModels[cursor].GROWTH_INCREMENT = ((lastValue * this.growth) / 100);
+                            if ((monthModels[cursor].ITER_INDEX_MONTH) % 3 === (this.startDate.getMonth() % 3)) {
+                                if (this.growthType === GrowthType.ABSOLUTE) {
+                                    monthModels[cursor].INCREMENT = this.growth;
+                                } else {
+                                    monthModels[cursor].INCREMENT = ((lastValue * this.growth) / 100);
+                                }
                             }
                         }
                     }
-                    monthModels[cursor].GROWTH_INCREMENT = Math.ceil(monthModels[cursor].GROWTH_INCREMENT);
-                    monthModels[cursor].VALUE = lastValue + monthModels[cursor].GROWTH_INCREMENT;
-                    if ((monthModels[cursor].ITER_INDEX_MONTH + 1) % 3 === (this.startDate.getMonth() % 3) || currentModel.ITER_INDEX_MONTH === endCursor.ITER_INDEX_MONTH) {
-                        lastValue = monthModels[cursor].VALUE;
-                    }
+                    monthModels[cursor].INCREMENT = Math.round(monthModels[cursor].INCREMENT);
+                    monthModels[cursor].VALUE = lastValue + monthModels[cursor].INCREMENT;
+                    lastValue = monthModels[cursor].VALUE;
                 }
                 cursor = cursor + 1;
             }
@@ -237,18 +251,18 @@ export class ForecastComponent {
                 } else {
                     if (currentModel.ITER_INDEX_YEAR > startCursor.ITER_INDEX_YEAR && currentModel.ITER_INDEX_YEAR <= endCursor.ITER_INDEX_YEAR) {
                         if (currentModel.ITER_INDEX_MONTH <= endCursor.ITER_INDEX_MONTH) {
-                            if (this.growthType === GrowthType.ABSOLUTE) {
-                                monthModels[cursor].GROWTH_INCREMENT = this.growth;
-                            } else {
-                                monthModels[cursor].GROWTH_INCREMENT = ((lastValue * this.growth) / 100);
+                            if ((monthModels[cursor].ITER_INDEX_MONTH) % 12 === (this.startDate.getMonth() % 12)) {
+                                if (this.growthType === GrowthType.ABSOLUTE) {
+                                    monthModels[cursor].INCREMENT = this.growth;
+                                } else {
+                                    monthModels[cursor].INCREMENT = ((lastValue * this.growth) / 100);
+                                }
                             }
                         }
                     }
-                    monthModels[cursor].GROWTH_INCREMENT = Math.ceil(monthModels[cursor].GROWTH_INCREMENT);
-                    monthModels[cursor].VALUE = lastValue + monthModels[cursor].GROWTH_INCREMENT;
-                    if ((monthModels[cursor].ITER_INDEX_MONTH + 1) % 12 === (this.startDate.getMonth() % 12) || currentModel.ITER_INDEX_MONTH === endCursor.ITER_INDEX_MONTH) {
-                        lastValue = monthModels[cursor].VALUE;
-                    }
+                    monthModels[cursor].INCREMENT = Math.round(monthModels[cursor].INCREMENT);
+                    monthModels[cursor].VALUE = lastValue + monthModels[cursor].INCREMENT;
+                    lastValue = monthModels[cursor].VALUE;
                 }
                 cursor = cursor + 1;
             }
@@ -256,29 +270,33 @@ export class ForecastComponent {
     }
 
     processForQuarterData() {
+        let lastValue = 0;
         this
             .forecastYears
-            .forEach((year : ForecastYear) => {
+            .forEach((year: ForecastYear) => {
                 year.QUARTERS = [];
-                [1, 2, 3, 4].forEach((quarter : number, index : number) => {
+                [1, 2, 3, 4].forEach((quarter: number, index: number) => {
                     const model = new ForecastUnitModel(quarter, year.YEAR);
                     model.LABEL = 'Q' + (index + 1);
                     model.VALUE = year
                         .MONTHS
-                        .filter((monthModel : ForecastUnitModel) => {
+                        .filter((monthModel: ForecastUnitModel) => {
                             return monthModel.MONTH >= ((quarter - 1) * 3) && monthModel.MONTH < (quarter * 3);
                         })
-                        .reduce((previousValue : number, currentValue : ForecastUnitModel) : number => {
+                        .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
                             return previousValue + currentValue.VALUE;
                         }, 0);
-                    model.GROWTH_INCREMENT = year
+                    model.INCREMENT = year
                         .MONTHS
-                        .filter((monthModel : ForecastUnitModel) => {
+                        .filter((monthModel: ForecastUnitModel) => {
                             return monthModel.MONTH >= ((quarter - 1) * 3) && monthModel.MONTH < (quarter * 3);
                         })
-                        .reduce((previousValue : number, currentValue : ForecastUnitModel) : number => {
-                            return previousValue + currentValue.GROWTH_INCREMENT;
+                        .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
+                            return previousValue + currentValue.INCREMENT;
                         }, 0);
+                    model.INCREMENT_PERCENT = lastValue === 0 ? 0 : ((model.VALUE - lastValue) / lastValue) * 10000;
+                    model.INCREMENT_PERCENT = Math.round(model.INCREMENT_PERCENT) / 100;
+                    lastValue = model.VALUE;
                     year
                         .QUARTERS
                         .push(model);
@@ -287,68 +305,101 @@ export class ForecastComponent {
     }
 
     processForYearlyData() {
+        let lastValue = 0;
         this
             .forecastYears
-            .forEach((year : ForecastYear) => {
+            .forEach((year: ForecastYear) => {
                 year.VALUE = year
                     .MONTHS
-                    .reduce((previousValue : number, currentValue : ForecastUnitModel) : number => {
+                    .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
                         return previousValue + currentValue.VALUE;
                     }, 0);
-                year.GROWTH_INCREMENT = year
+                year.INCREMENT = year
                     .MONTHS
-                    .reduce((previousValue : number, currentValue : ForecastUnitModel) : number => {
-                        return previousValue + currentValue.GROWTH_INCREMENT;
+                    .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
+                        return previousValue + currentValue.INCREMENT;
                     }, 0);
+                year.INCREMENT_PERCENT = lastValue === 0 ? 0 : ((year.VALUE - lastValue) / lastValue) * 10000;
+                year.INCREMENT_PERCENT = Math.round(year.INCREMENT_PERCENT) / 100;
+                lastValue = year.VALUE;
             });
     }
 
     onXlsFileContentUpdate($event) {
-        const rows : any[] = $event[0].data;
+        const rows: any[] = $event[0].data;
         if (rows) {
+            let lastValue = rows[0]['JAN'];
             this
                 .forecastYears
-                .forEach((year : ForecastYear) => {
-                    const row = rows.find((item : any) => {
+                .forEach((year: ForecastYear) => {
+                    const row = rows.find((item: any) => {
                         return parseInt(item.YEAR) === year.YEAR;
                     });
                     if (row) {
                         year
                             .MONTHS
-                            .forEach((model : ForecastUnitModel) => {
-                                if (this.viewSelected === ViewOption.RESULTS) {
-                                    model.MANUAL_VALUE = parseFloat(row[MONTHNAMES[model.MONTH]]);
-                                } else {
-                                    model.MANUAL_INCREMENT = parseFloat(row[MONTHNAMES[model.MONTH]]);
-                                }
+                            .forEach((model: ForecastUnitModel) => {
+                                model.MANUAL_VALUE = parseFloat(row[MONTHNAMES[model.MONTH]]);
+                                // model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
                             });
                     }
                 });
         }
     }
 
+    onManualSliderApplied() {
+        let lastValue = 0;
+        this
+            .forecastYears
+            .forEach((year: ForecastYear, yearIndex: number) => {
+                year
+                    .MONTHS
+                    .forEach((model: ForecastUnitModel, monthIndex: number) => {
+                        let applyInitial = false;
+                        if (this.manualApplyAcross === 'all') {
+                            if (yearIndex === 0 && monthIndex === 0) {
+                                applyInitial = true;
+                            }
+                        } else {
+                            if (this.manualCurrentRowYear === year.YEAR && monthIndex === 0) {
+                                applyInitial = true;
+                            }
+                        }
+                        if (applyInitial) {
+                            model.MANUAL_VALUE = this.manualStartValue;
+                        } else {
+                            if (this.manualApplyAcross === 'all' || (this.manualApplyAcross === 'row' && this.manualCurrentRowYear <= year.YEAR)) {
+                                // if (this.manualGrowthType === GrowthType.ABSOLUTE) {
+                                //     model.MANUAL_INCREMENT = this.manualGrowth;
+                                // }
+                                // model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
+                            }
+                        }
+                        lastValue = model.MANUAL_VALUE;
+                    });
+            });
+    }
+
     saveManualData() {
         let lastValue = 0;
         this
             .forecastYears
-            .forEach((year : ForecastYear) => {
+            .forEach((year: ForecastYear, yearIndex: number) => {
                 year
                     .MONTHS
-                    .forEach((model : ForecastUnitModel) => {
-                        if (this.viewSelected === ViewOption.RESULTS) {
-                            model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
+                    .forEach((model: ForecastUnitModel, monthIndex: number) => {
+                        if (yearIndex === 0 && monthIndex === 0) {
+                            model.MANUAL_INCREMENT = 0;
                         } else {
-                            model.MANUAL_VALUE = model.MANUAL_INCREMENT + lastValue;
+                            model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
                         }
-                        lastValue = model.MANUAL_VALUE;
-                        model.GROWTH_INCREMENT = model.MANUAL_INCREMENT;
+                        model.INCREMENT = model.MANUAL_INCREMENT;
                         model.VALUE = model.MANUAL_VALUE;
                     });
             });
         this.processForQuarterData();
         this.processForYearlyData();
         this.processForMaps();
-        // this.isManual = false;
     }
 
     process() {
@@ -358,6 +409,7 @@ export class ForecastComponent {
         this.processForQuarterData();
         this.processForYearlyData();
         this.processForMaps();
+        this.showSliderMenu = false;
     }
 
     processForMaps() {
@@ -370,7 +422,11 @@ export class ForecastComponent {
         this.processForMaps();
     }
 
-    selectView(period : PeriodType) {
+    ononDataTypeViewChange() {
+        console.log(this);
+    }
+
+    selectView(period: PeriodType) {
         this.chartViewSelected = period;
         this.processForMaps();
     }
@@ -378,5 +434,13 @@ export class ForecastComponent {
     onManualModeChange() {
         this.chartViewSelected = PeriodType.MONTHLY;
         this.growthPeriod = PeriodType.MONTHLY;
+    }
+
+    applyManualProps() {
+        this.onManualSliderApplied();
+        this.processForQuarterData();
+        this.processForYearlyData();
+        this.processForMaps();
+        this.showSliderMenu = false;
     }
 }
