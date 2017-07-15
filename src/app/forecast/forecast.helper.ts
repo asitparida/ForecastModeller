@@ -16,21 +16,16 @@ export module ChartsHelper {
         ViewSelected: ViewOption,
         Period: PeriodType) {
 
-        const TimePeriod = 'Year';
-        const title = `Estimated ${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : 'Actuals'} ${TimePeriod} On ${TimePeriod}`;
-        let models: ForecastUnitModel[] = []; 
+        const TimePeriod = 'Month';
+        const title = `Estimated ${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : ViewSelected === ViewOption.RESULTS ? 'Actuals' : ' Increment in Percent'} ${TimePeriod} On ${TimePeriod}`;
+        let models: ForecastUnitModel[] = [];
         ForecastYears.forEach((year: ForecastYear) => {
             models = models.concat(year.MONTHS);
         });
-        // GetFilteredModels(
-        //     ForecastYears,
-        //     StartDate,
-        //     EndDate,
-        //     Period
-        // );
         const series = [{
             data: models.map((model: ForecastUnitModel) => {
-                return ViewSelected === ViewOption.RESULTS ? model.VALUE : model.INCREMENT;
+                return ViewSelected === ViewOption.RESULTS ? model.VALUE :
+                    ViewSelected === ViewOption.INCREMENTS ? model.INCREMENT : model.INCREMENT_PERCENT;
             }),
             name: title
         }];
@@ -41,7 +36,7 @@ export module ChartsHelper {
         };
         const yAxis = {
             title: {
-                text: `${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : 'Actuals'} ($)`
+                text: `${ViewSelected === ViewOption.INCREMENTS ? 'Increments ($)' : ViewSelected === ViewOption.RESULTS ? 'Actuals ($)' : 'Increment in Percent (%)'}`
             }
         };
         const plotOptions = {
@@ -103,14 +98,15 @@ export module ChartsHelper {
         Period: PeriodType) {
 
         const TimePeriod = 'Quarter';
-        const title = `Estimated ${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : 'Actuals'} ${TimePeriod} On ${TimePeriod}`;
+        const title = `Estimated ${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : ViewSelected === ViewOption.RESULTS ? 'Actuals' : ' Increment in Percent'} ${TimePeriod} On ${TimePeriod}`;
         let models: ForecastUnitModel[] = [];
         ForecastYears.forEach((year: ForecastYear) => {
             models = models.concat(year.QUARTERS);
         });
         const series = [{
             data: models.map((model: ForecastUnitModel) => {
-                return ViewSelected === ViewOption.RESULTS ? model.VALUE : model.INCREMENT;
+                return ViewSelected === ViewOption.RESULTS ? model.VALUE :
+                    ViewSelected === ViewOption.INCREMENTS ? model.INCREMENT : model.INCREMENT_PERCENT;
             }),
             name: title
         }];
@@ -121,7 +117,7 @@ export module ChartsHelper {
         };
         const yAxis = {
             title: {
-                text: `${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : 'Actuals'} ($)`
+                text: `${ViewSelected === ViewOption.INCREMENTS ? 'Increments ($)' : ViewSelected === ViewOption.RESULTS ? 'Actuals ($)' : 'Increment in Percent (%)'}`
             }
         };
         const plotOptions = {
@@ -148,10 +144,11 @@ export module ChartsHelper {
         Period: PeriodType) {
 
         const TimePeriod = 'Year';
-        const title = `Estimated ${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : 'Actuals'} ${TimePeriod} On ${TimePeriod}`;
+        const title = `Estimated ${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : ViewSelected === ViewOption.RESULTS ? 'Actuals' : ' Increment in Percent'} ${TimePeriod} On ${TimePeriod}`;
         const series = [{
             data: ForecastYears.map((model: ForecastYear) => {
-                return ViewSelected === ViewOption.RESULTS ? model.VALUE : model.INCREMENT;
+                return ViewSelected === ViewOption.RESULTS ? model.VALUE :
+                    ViewSelected === ViewOption.INCREMENTS ? model.INCREMENT : model.INCREMENT_PERCENT;
             }),
             name: title
         }];
@@ -162,7 +159,7 @@ export module ChartsHelper {
         };
         const yAxis = {
             title: {
-                text: `${ViewSelected === ViewOption.INCREMENTS ? 'Increments' : 'Actuals'} ($)`
+                text: `${ViewSelected === ViewOption.INCREMENTS ? 'Increments ($)' : ViewSelected === ViewOption.RESULTS ? 'Actuals ($)' : 'Increment in Percent (%)'}`
             }
         };
         const plotOptions = {
