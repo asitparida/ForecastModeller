@@ -143,6 +143,10 @@ $color: #303030;
                     width: 49%;
                     padding: 0 15px;
                     display: inline-block;
+                    select.revenue-ctrl,
+                    input.revenue-ctrl {
+                        margin-left: 0 !important;
+                    }
                     &.w100 {
                         width:100%;
                         label {

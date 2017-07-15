@@ -236,6 +236,8 @@ export class ForecastComponent {
                     }
                     monthModels[cursor].INCREMENT = Math.round(monthModels[cursor].INCREMENT);
                     monthModels[cursor].VALUE = lastValue + monthModels[cursor].INCREMENT;
+                    monthModels[cursor].INCREMENT_PERCENT = ((monthModels[cursor].VALUE - lastValue) / lastValue) * 100;
+                    monthModels[cursor].INCREMENT_PERCENT = Math.round(monthModels[cursor].INCREMENT_PERCENT * 100) / 100;
                     lastValue = monthModels[cursor].VALUE;
                 }
                 cursor = cursor + 1;
@@ -263,6 +265,8 @@ export class ForecastComponent {
                     }
                     monthModels[cursor].INCREMENT = Math.round(monthModels[cursor].INCREMENT);
                     monthModels[cursor].VALUE = lastValue + monthModels[cursor].INCREMENT;
+                    monthModels[cursor].INCREMENT_PERCENT = ((monthModels[cursor].VALUE - lastValue) / lastValue) * 100;
+                    monthModels[cursor].INCREMENT_PERCENT = Math.round(monthModels[cursor].INCREMENT_PERCENT * 100) / 100;
                     lastValue = monthModels[cursor].VALUE;
                 }
                 cursor = cursor + 1;
