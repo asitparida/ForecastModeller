@@ -90,11 +90,9 @@
                             <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
                             <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
                             </span>
-                            <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.RESULTS" [(ngModel)]="model.MANUAL_VALUE" />
-                            <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.INCREMENTS" [(ngModel)]="model.MANUAL_INCREMENT"
-                            />
-                            <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.PERCENT" [(ngModel)]="model.MANUAL_INCREMENT_PERCENT"
-                            />
+                            <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.RESULTS" [(ngModel)]="model.MANUAL_VALUE" step="0.01" />
+                            <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.INCREMENTS" [(ngModel)]="model.MANUAL_INCREMENT" step="0.01" />
+                            <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.PERCENT" [(ngModel)]="model.MANUAL_INCREMENT_PERCENT" step="0.01" />
                         </td>
                     </tr>
                 </tbody>
