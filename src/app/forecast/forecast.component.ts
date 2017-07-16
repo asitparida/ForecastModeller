@@ -35,6 +35,8 @@ export class ForecastComponent {
     manualGrowth: number;
     manualApplyAcross: string = 'all';
     manualCurrentRowYear: number;
+    manualYearsAvailable: { label: string, value: number }[]
+    manualYearOptionSelected: number;
 
     showSliderMenu: Boolean = false;
     chartOptionsForMonthlyView = null;
@@ -403,11 +405,11 @@ export class ForecastComponent {
                     .forEach((model: ForecastUnitModel, monthIndex: number) => {
                         if (this.editViewSelected === ViewOption.RESULTS) {
                             model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
-                            model.MANUAL_INCREMENT_PERCENT = ((model.MANUAL_VALUE  - lastValue) / lastValue) * 10000;
+                            model.MANUAL_INCREMENT_PERCENT = ((model.MANUAL_VALUE - lastValue) / lastValue) * 10000;
                             model.MANUAL_INCREMENT_PERCENT = Math.round(model.MANUAL_INCREMENT_PERCENT) / 100;
                         } else if (this.editViewSelected === ViewOption.INCREMENTS) {
                             model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
-                            model.MANUAL_INCREMENT_PERCENT = ((model.MANUAL_VALUE  - lastValue) / lastValue) * 10000;
+                            model.MANUAL_INCREMENT_PERCENT = ((model.MANUAL_VALUE - lastValue) / lastValue) * 10000;
                             model.MANUAL_INCREMENT_PERCENT = Math.round(model.MANUAL_INCREMENT_PERCENT) / 100;
                         } else if (this.editViewSelected === ViewOption.PERCENT) {
                             model.MANUAL_INCREMENT = (lastValue * model.MANUAL_INCREMENT_PERCENT) * 0.01;
@@ -446,7 +448,7 @@ export class ForecastComponent {
         this.processForMaps();
     }
 
-    ononDataTypeViewChange() {
+    onDataTypeViewChange() {
         console.log(this);
     }
 
@@ -461,10 +463,37 @@ export class ForecastComponent {
     }
 
     applyManualProps() {
-        // this.onManualSliderApplied();
-        this.processForQuarterData();
-        this.processForYearlyData();
-        this.processForMaps();
+        if (this.manualGrowthType === GrowthType.ABSOLUTE) {
+            this.editViewSelected = ViewOption.INCREMENTS;
+        } else if (this.manualGrowthType === GrowthType.PERCENT) {
+            this.editViewSelected = ViewOption.PERCENT;
+        }
+        this
+            .forecastYears
+            .forEach((year: ForecastYear) => {
+                year
+                    .MONTHS
+                    .forEach((model: ForecastUnitModel) => {
+                        if (this.manualYearOptionSelected === 0 || (this.manualYearOptionSelected === year.YEAR)) {
+                            if (this.manualGrowthType === GrowthType.ABSOLUTE) {
+                                model.MANUAL_INCREMENT = this.manualGrowth;
+                            } else if (this.manualGrowthType === GrowthType.PERCENT) {
+                                model.MANUAL_INCREMENT_PERCENT = this.manualGrowth;
+                            }
+                        }
+                    });
+            });
+        // this.processForQuarterData();
+        // this.processForYearlyData();
+        // this.processForMaps();
         this.showSliderMenu = false;
+    }
+
+    openEditSliderMenu() {
+        this.manualYearsAvailable = this.forecastYears.map((year: ForecastYear) => {
+            return { label: year.YEAR.toString(), value: year.YEAR };
+        });
+        this.manualYearsAvailable.push({ label: 'All Years', value: 0 });
+        this.showSliderMenu = true;
     }
 }

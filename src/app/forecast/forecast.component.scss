@@ -161,6 +161,10 @@ $color: #303030;
                     input.revenue-ctrl {
                         margin-left: 0 !important;
                     }
+                    select.revenue-grid-ctrl{
+                        margin-left: 0 !important;
+                        width:100%;
+                    }
                     &.w100 {
                         width:100%;
                         label {

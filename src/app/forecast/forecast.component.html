@@ -32,6 +32,9 @@
         </div>
         <div class="revenues-actuals-grid">
             <div class="revenues-actuals-grid-manual-menu" [hidden]="!isManual">
+                <div class="revenues-actuals-grid-manual-menu-item" (click)="openEditSliderMenu();">
+                    <i class="fa fa-pencil-square-o"></i>
+                </div>
                 <div class="revenues-actuals-grid-manual-menu-item">
                     <app-xl-file-ctrl label="" (xlsContentUpdated)="onXlsFileContentUpdate($event)"></app-xl-file-ctrl>
                 </div>
@@ -46,8 +49,8 @@
                     <div class="revenues-actuals-grid-manual-menu-item input-ctrl">
                         <label>Base Editing View</label>
                         <select class="revenue-grid-ctrl" [(ngModel)]="editViewSelected" (change)="onDataViewChange()">
-                        <option *ngFor="let item of viewOptions" [ngValue]="item.value">{{item.label}}</option>
-                    </select>
+                            <option *ngFor="let item of viewOptions" [ngValue]="item.value">{{item.label}}</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -78,10 +81,7 @@
                         <td colspan="13" *ngIf="rows.length == 0 && isManual == false"> No Records for now</td>
                     </tr>
                     <tr *ngFor="let year of forecastYears">
-                        <td [class.isManual]="isManual && false">
-                            <!-- <div class="revenues-actuals-grid-menu" (click)="manualCurrentRowYear = year.YEAR;showSliderMenu = !showSliderMenu" [hidden]="!isManual">
-                                <i class="fa fa-bars"></i>
-                            </div> -->
+                        <td>
                             {{year.YEAR}}
                         </td>
                         <td *ngFor="let model of year.MONTHS">
@@ -210,10 +210,14 @@
                     <label>Select Growth Value</label>
                     <input class="revenue-ctrl" [(ngModel)]="manualGrowth" type="number" title="Enter Growth Value" />
                 </div>
-                <div class="revenues-actuals-container-slider-inner-item w100">
-                    <label class="inline-block w100">Apply across</label>
+                <div class="revenues-actuals-container-slider-inner-item">
+                    <label>Apply across</label>
+                    <select class="revenue-grid-ctrl" [(ngModel)]="manualYearOptionSelected">
+                        <option *ngFor="let item of manualYearsAvailable" [ngValue]="item.value">{{item.label}}</option>
+                    </select>
+                    <!-- <label class="inline-block w100">Apply across</label>
                     <label class="radioLabel"><input class="revenue-ctrl" [(ngModel)]="manualApplyAcross" value="row" type="radio" />{{manualCurrentRowYear}}</label>
-                    <label class="radioLabel"><input class="revenue-ctrl" [(ngModel)]="manualApplyAcross" value="all" type="radio" />All Years</label>
+                    <label class="radioLabel"><input class="revenue-ctrl" [(ngModel)]="manualApplyAcross" value="all" type="radio" />All Years</label> -->
                 </div>
                 <button class="btn btn-primary revenue-ctrl" (click)="applyManualProps()">Apply</button>
             </div>
