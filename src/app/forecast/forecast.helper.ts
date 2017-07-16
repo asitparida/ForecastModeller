@@ -7,8 +7,10 @@ import {
     ViewOption,
     MONTHNAMES
 } from './forecast.models';
+import { CurrencyDelimitedWithCommaPipe } from '../currency-delimited.pipe';
 
 export module ChartsHelper {
+    const currencyDelimitedWithCommaPipe: CurrencyDelimitedWithCommaPipe = new CurrencyDelimitedWithCommaPipe();
     export function GetDataMapForMonthly(
         ForecastYears: ForecastYear[],
         StartDate: Date,
@@ -42,7 +44,13 @@ export module ChartsHelper {
         const plotOptions = {
             line: {
                 dataLabels: {
-                    enabled: true
+                    enabled: true,
+                    formatter: function(){
+                        if (ViewSelected === ViewOption.INCREMENTS || ViewSelected === ViewOption.RESULTS) {
+                            return currencyDelimitedWithCommaPipe.transform(this.y, []);
+                        }
+                        return this.y;
+                    }
                 },
                 enableMouseTracking: false
             }
@@ -120,10 +128,17 @@ export module ChartsHelper {
                 text: `${ViewSelected === ViewOption.INCREMENTS ? 'Increments ($)' : ViewSelected === ViewOption.RESULTS ? 'Actuals ($)' : 'Increment in Percent (%)'}`
             }
         };
+        const pipeRef = this.currencyDelimitedWithCommaPipe;
         const plotOptions = {
             line: {
                 dataLabels: {
-                    enabled: true
+                    enabled: true,
+                    formatter: function(){
+                        if (ViewSelected === ViewOption.INCREMENTS || ViewSelected === ViewOption.RESULTS) {
+                            return currencyDelimitedWithCommaPipe.transform(this.y, []);
+                        }
+                        return this.y;
+                    }
                 },
                 enableMouseTracking: false
             }
@@ -165,7 +180,13 @@ export module ChartsHelper {
         const plotOptions = {
             line: {
                 dataLabels: {
-                    enabled: true
+                    enabled: true,
+                    formatter: function(){
+                        if (ViewSelected === ViewOption.INCREMENTS || ViewSelected === ViewOption.RESULTS) {
+                            return currencyDelimitedWithCommaPipe.transform(this.y, []);
+                        }
+                        return this.y;
+                    }
                 },
                 enableMouseTracking: false
             }

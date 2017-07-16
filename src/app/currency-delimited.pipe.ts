@@ -3,7 +3,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({name: 'currencyDelimitedWithComma'})
 export class CurrencyDelimitedWithCommaPipe implements PipeTransform {
   transform(value, args: string[]): any {
-    console.log(value);
     let result = value;
     if (value === undefined || value === null) {
       return 0;
@@ -26,7 +25,6 @@ export class CurrencyDelimitedWithCommaPipe implements PipeTransform {
         const numberWithComma =  (parseInt(value)).toFixed(0);
         result = numberWithComma.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
-    console.log(result);
     return result;
   }
 }
