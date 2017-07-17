@@ -605,7 +605,7 @@ export class ForecastComponent {
     }
 
     roundValue(num: number) {
-        num = Math.round(num * 100);
-        return num / 100;
+        num = parseFloat(num.toFixed(2));
+        return num;
     }
 }
