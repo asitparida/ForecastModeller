@@ -196,6 +196,7 @@ export class ForecastComponent {
         });
         if (this.growthPeriod === PeriodType.MONTHLY) {
             let cursor = startCursor.ITER_INDEX_MONTH;
+            let lastIncrement = 0;
             while (cursor < monthModels.length) {
                 if (cursor === startCursor.ITER_INDEX_MONTH) {
                     monthModels[cursor].VALUE = this.startValue;
@@ -207,13 +208,15 @@ export class ForecastComponent {
                         } else {
                             monthModels[cursor].INCREMENT = ((lastValue * this.growth) / 100);
                         }
-                        monthModels[cursor].INCREMENT_PERCENT = this.growth;
+                        // monthModels[cursor].INCREMENT_PERCENT = this.growth;
                     }
-                    monthModels[cursor].INCREMENT = monthModels[cursor].INCREMENT;
                     monthModels[cursor].VALUE = lastValue + monthModels[cursor].INCREMENT;
+                    monthModels[cursor].INCREMENT_PERCENT = lastValue === 0 ? 0 : ((monthModels[cursor].VALUE / lastValue) - 1) * 100;
                     monthModels[cursor].VALUE = this.roundValue(monthModels[cursor].VALUE);
                     monthModels[cursor].INCREMENT = this.roundValue(monthModels[cursor].INCREMENT);
+                    monthModels[cursor].INCREMENT_PERCENT = this.roundValue(monthModels[cursor].INCREMENT_PERCENT);
                     lastValue = monthModels[cursor].VALUE;
+                    lastIncrement = monthModels[cursor].INCREMENT;
                 }
                 cursor = cursor + 1;
             }
@@ -316,7 +319,16 @@ export class ForecastComponent {
                         .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
                             return previousValue + currentValue.INCREMENT;
                         }, 0);
-                    model.INCREMENT_PERCENT = lastValue === 0 ? 0 : ((model.VALUE - lastValue) / lastValue) * 100;
+                    model.INCREMENT_PERCENT = year
+                        .MONTHS
+                        .filter((monthModel: ForecastUnitModel) => {
+                            return monthModel.MONTH >= ((quarter - 1) * 3) && monthModel.MONTH < (quarter * 3);
+                        })
+                        .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
+                            return previousValue * (1 + (currentValue.INCREMENT_PERCENT / 100));
+                        }, 1);
+                    model.INCREMENT_PERCENT = model.INCREMENT_PERCENT - 1;
+
                     model.INCREMENT_PERCENT = this.roundValue(model.INCREMENT_PERCENT);
                     model.INCREMENT = this.roundValue(model.INCREMENT);
                     model.VALUE = this.roundValue(model.VALUE);
@@ -343,7 +355,12 @@ export class ForecastComponent {
                     .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
                         return previousValue + currentValue.INCREMENT;
                     }, 0);
-                year.INCREMENT_PERCENT = lastValue === 0 ? 0 : ((year.VALUE - lastValue) / lastValue) * 100;
+                year.INCREMENT_PERCENT = year
+                        .MONTHS
+                        .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
+                            return previousValue * (1 + (currentValue.INCREMENT_PERCENT / 100));
+                        }, 1);
+                year.INCREMENT_PERCENT = year.INCREMENT_PERCENT - 1;
                 year.INCREMENT_PERCENT = this.roundValue(year.INCREMENT_PERCENT);
                 year.INCREMENT = this.roundValue(year.INCREMENT);
                 year.VALUE = this.roundValue(year.VALUE);
