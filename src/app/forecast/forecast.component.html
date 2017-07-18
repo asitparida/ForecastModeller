@@ -35,7 +35,7 @@
                 <div class="revenues-actuals-grid-manual-menu-item" (click)="openEditSliderMenu();">
                     <i class="fa fa-pencil-square-o"></i>
                 </div>
-                <div class="revenues-actuals-grid-manual-menu-item">
+                <div class="revenues-actuals-grid-manual-menu-item" [hidden]="chartViewSelected != PERIOD_TYPE_OPTIONS.MONTHLY">
                     <app-xl-file-ctrl label="" (xlsContentUpdated)="onXlsFileContentUpdate($event)"></app-xl-file-ctrl>
                 </div>
                 <div class="revenues-actuals-grid-manual-menu-item" title="Save Data" (click)="saveManualData()">
@@ -49,7 +49,7 @@
                     <div class="revenues-actuals-grid-manual-menu-item input-ctrl">
                         <label>Base Editing View</label>
                         <select class="revenue-grid-ctrl" [(ngModel)]="editViewSelected" (change)="onDataViewChange()">
-                            <option *ngFor="let item of viewOptions" [ngValue]="item.value">{{item.label}}</option>
+                            <option *ngFor="let item of editViewOptions" [ngValue]="item.value">{{item.label}}</option>
                         </select>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                         </td>
                         <td *ngFor="let model of year.MONTHS">
                             <span *ngIf="!isManual">
-                                <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">{{model.VALUE | currencyDelimitedWithComma}}</span>
                             <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
                             <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
                             </span>
@@ -118,10 +118,14 @@
                     <tr *ngFor="let year of forecastYears">
                         <td>{{year.YEAR}}</td>
                         <td *ngFor="let model of year.QUARTERS">
-                            <span>
-                                <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">$ {{model.VALUE | currencyDelimitedWithComma}}</span>
-                            <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
-                            <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
+                            <span *ngIf="!isManual">
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">{{model.VALUE | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
+                            </span>
+                            <span *ngIf="isManual">
+                                    <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.RESULTS" [(ngModel)]="model.MANUAL_VALUE" step="0.01" />
+                                    <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.INCREMENTS" [(ngModel)]="model.MANUAL_INCREMENT" step="0.01" />
                             </span>
                         </td>
                     </tr>
@@ -145,10 +149,14 @@
                     <tr *ngFor="let year of forecastYears">
                         <td>{{year.YEAR}}</td>
                         <td>
-                            <span>
-                                <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">$ {{year.VALUE | currencyDelimitedWithComma}}</span>
-                            <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{year.INCREMENT | currencyDelimitedWithComma}}</span>
-                            <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{year.INCREMENT_PERCENT}} %</span>
+                            <span *ngIf="!isManual">
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">{{year.VALUE | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{year.INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{year.INCREMENT_PERCENT}} %</span>
+                            </span>
+                            <span *ngIf="isManual">
+                                    <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.RESULTS" [(ngModel)]="year.MANUAL_VALUE" step="0.01" />
+                                    <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.INCREMENTS" [(ngModel)]="year.MANUAL_INCREMENT" step="0.01" />
                             </span>
                         </td>
                     </tr>
