@@ -293,6 +293,7 @@ export class ForecastComponent {
                 [1, 2, 3, 4].forEach((quarter: number, index: number) => {
                     const model = new ForecastUnitModel(quarter, year.YEAR);
                     model.LABEL = 'Q' + (index + 1);
+                    let quarterMultiplier = 3;
                     model.VALUE = year
                         .MONTHS
                         .filter((monthModel: ForecastUnitModel) => {
@@ -301,14 +302,16 @@ export class ForecastComponent {
                         .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
                             return previousValue + currentValue.VALUE;
                         }, 0);
-                    model.INCREMENT = year
-                        .MONTHS
-                        .filter((monthModel: ForecastUnitModel) => {
-                            return monthModel.MONTH >= ((quarter - 1) * 3) && monthModel.MONTH < (quarter * 3);
-                        })
-                        .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
-                            return previousValue + currentValue.INCREMENT;
-                        }, 0);
+                    // model.INCREMENT = year
+                    //     .MONTHS
+                    //     .filter((monthModel: ForecastUnitModel) => {
+                    //         return monthModel.MONTH >= ((quarter - 1) * 3) && monthModel.MONTH < (quarter * 3);
+                    //     })
+                    //     .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
+                    //         return previousValue + currentValue.INCREMENT;
+                    //     }, 0);
+                    model.INCREMENT = model.VALUE - lastValue;
+                    // model.INCREMENT = model.INCREMENT * 3;
                     model.INCREMENT_PERCENT = year
                         .MONTHS
                         .filter((monthModel: ForecastUnitModel) => {
@@ -339,11 +342,12 @@ export class ForecastComponent {
                     .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
                         return previousValue + currentValue.VALUE;
                     }, 0);
-                year.INCREMENT = year
-                    .MONTHS
-                    .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
-                        return previousValue + currentValue.INCREMENT;
-                    }, 0);
+                // year.INCREMENT = year
+                //     .MONTHS
+                //     .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
+                //         return previousValue + currentValue.INCREMENT;
+                //     }, 0);
+                year.INCREMENT = year.VALUE - lastValue;
                 year.INCREMENT_PERCENT = year
                     .MONTHS
                     .reduce((previousValue: number, currentValue: ForecastUnitModel): number => {
@@ -414,6 +418,7 @@ export class ForecastComponent {
                         .forEach((model: ForecastUnitModel, monthIndex: number) => {
                             if (this.editViewSelected === ViewOption.RESULTS) {
                                 model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
+                                model.MANUAL_INCREMENT_PERCENT = (model.MANUAL_INCREMENT / lastValue) * 100;
                             } else if (this.editViewSelected === ViewOption.INCREMENTS) {
                                 model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
                                 model.MANUAL_INCREMENT_PERCENT = ((model.MANUAL_VALUE - lastValue) / lastValue) * 100;
@@ -431,9 +436,9 @@ export class ForecastComponent {
                         });
                 });
         } else if (this.chartViewSelected === PeriodType.QUARTERLY) {
-            if (this.editViewSelected === ViewOption.RESULTS) {
-                this.manualStartValue = this.forecastYears[0].QUARTERS[0].MANUAL_VALUE / 3;
-            }
+            // if (this.editViewSelected === ViewOption.RESULTS) {
+            //     this.manualStartValue = this.forecastYears[0].QUARTERS[0].MANUAL_VALUE / 3;
+            // }
             let lastValue = this.manualStartValue;
             this
                 .forecastYears
@@ -443,10 +448,11 @@ export class ForecastComponent {
                             if (this.editViewSelected === ViewOption.RESULTS) {
                                 model.MANUAL_VALUE = this.roundValue(model.MANUAL_VALUE);
                                 model.VALUE = model.MANUAL_VALUE;
-                            } else if (this.editViewSelected === ViewOption.INCREMENTS) {
-                                model.MANUAL_INCREMENT = this.roundValue(model.MANUAL_INCREMENT);
-                                model.INCREMENT = model.MANUAL_INCREMENT;
-                            }
+                            } 
+                            // else if (this.editViewSelected === ViewOption.INCREMENTS) {
+                            //     model.MANUAL_INCREMENT = this.roundValue(model.MANUAL_INCREMENT);
+                            //     model.INCREMENT = model.MANUAL_INCREMENT;
+                            // }
                         });
                     year
                         .MONTHS
@@ -456,11 +462,12 @@ export class ForecastComponent {
                                 model.MANUAL_VALUE = corresponidngQuarter.MANUAL_VALUE / 3;
                                 model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
                                 model.MANUAL_INCREMENT_PERCENT = lastValue === 0 ? 0 : (model.MANUAL_INCREMENT / lastValue) * 100;
-                            } else if (this.editViewSelected === ViewOption.INCREMENTS) {
-                                model.MANUAL_INCREMENT = corresponidngQuarter.MANUAL_INCREMENT / 3;
-                                model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
-                                model.MANUAL_INCREMENT_PERCENT = lastValue === 0 ? 0 : (model.MANUAL_INCREMENT / lastValue) * 100;
-                            }
+                            } 
+                            // else if (this.editViewSelected === ViewOption.INCREMENTS) {
+                            //     model.MANUAL_INCREMENT = corresponidngQuarter.MANUAL_INCREMENT / 9;
+                            //     model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
+                            //     model.MANUAL_INCREMENT_PERCENT = lastValue === 0 ? 0 : (model.MANUAL_INCREMENT / lastValue) * 100;
+                            // }
                             model.MANUAL_INCREMENT = this.roundValue(model.MANUAL_INCREMENT);
                             model.MANUAL_INCREMENT_PERCENT = this.roundValue(model.MANUAL_INCREMENT_PERCENT);
                             model.MANUAL_VALUE = this.roundValue(model.MANUAL_VALUE);
@@ -486,11 +493,12 @@ export class ForecastComponent {
                                 model.MANUAL_VALUE = year.MANUAL_VALUE / 4;
                                 model.MANUAL_VALUE = this.roundValue(model.MANUAL_VALUE);
                                 model.VALUE = model.MANUAL_VALUE;
-                            } else if (this.editViewSelected === ViewOption.INCREMENTS) {
-                                model.MANUAL_INCREMENT = year.MANUAL_INCREMENT / 4;
-                                model.MANUAL_INCREMENT = this.roundValue(model.MANUAL_INCREMENT);
-                                model.INCREMENT = model.MANUAL_INCREMENT;
                             }
+                            // else if (this.editViewSelected === ViewOption.INCREMENTS) {
+                            //     model.MANUAL_INCREMENT = year.MANUAL_INCREMENT / 4;
+                            //     model.MANUAL_INCREMENT = this.roundValue(model.MANUAL_INCREMENT);
+                            //     model.INCREMENT = model.MANUAL_INCREMENT;
+                            // }
                         });
                     year
                         .MONTHS
@@ -500,14 +508,12 @@ export class ForecastComponent {
                                 model.MANUAL_VALUE = corresponidngQuarter.MANUAL_VALUE / 3;
                                 model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
                                 model.MANUAL_INCREMENT_PERCENT = lastValue === 0 ? 0 : (model.MANUAL_INCREMENT / lastValue) * 100;
-                            } else if (this.editViewSelected === ViewOption.INCREMENTS) {
-                                model.MANUAL_INCREMENT = corresponidngQuarter.MANUAL_INCREMENT / 3;
-                                model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
-                                model.MANUAL_INCREMENT_PERCENT = lastValue === 0 ? 0 : (model.MANUAL_INCREMENT / lastValue) * 100;
                             }
-                            // model.MANUAL_VALUE = corresponidngQuarter.MANUAL_VALUE / 3;
-                            // model.MANUAL_INCREMENT = model.MANUAL_VALUE - lastValue;
-                            // model.MANUAL_INCREMENT_PERCENT = lastValue === 0 ? 0 : (model.MANUAL_INCREMENT / lastValue) * 100;
+                            // else if (this.editViewSelected === ViewOption.INCREMENTS) {
+                            //     model.MANUAL_INCREMENT = corresponidngQuarter.MANUAL_INCREMENT / 3;
+                            //     model.MANUAL_VALUE = lastValue + model.MANUAL_INCREMENT;
+                            //     model.MANUAL_INCREMENT_PERCENT = lastValue === 0 ? 0 : (model.MANUAL_INCREMENT / lastValue) * 100;
+                            // }
                             model.MANUAL_INCREMENT = this.roundValue(model.MANUAL_INCREMENT);
                             model.MANUAL_INCREMENT_PERCENT = this.roundValue(model.MANUAL_INCREMENT_PERCENT);
                             model.MANUAL_VALUE = this.roundValue(model.MANUAL_VALUE);
@@ -518,6 +524,7 @@ export class ForecastComponent {
                         });
                 });
         }
+        this.viewSelected = this.editViewSelected;
         this.processForQuarterData();
         this.processForYearlyData();
         this.processForMaps();
@@ -553,9 +560,9 @@ export class ForecastComponent {
         if (this.isManual === true) {
             if (this.chartViewSelected === PeriodType.QUARTERLY || this.chartViewSelected === PeriodType.YEARLY) {
                 this.editViewOptions = this.viewOptions.filter((option: any) => {
-                    return option.value === ViewOption.RESULTS || option.value === ViewOption.INCREMENTS;
+                    return option.value === ViewOption.RESULTS;
                 });
-                if (this.editViewSelected === ViewOption.PERCENT) {
+                if (this.editViewSelected === ViewOption.PERCENT || this.editViewSelected === ViewOption.INCREMENTS) {
                     this.editViewSelected = ViewOption.RESULTS;
                 }
             }
@@ -566,7 +573,7 @@ export class ForecastComponent {
     onManualModeChange() {
         if (this.chartViewSelected === PeriodType.QUARTERLY || this.chartViewSelected === PeriodType.YEARLY) {
             this.editViewOptions = this.viewOptions.filter((option: any) => {
-                return option.value === ViewOption.RESULTS || option.value === ViewOption.INCREMENTS;
+                return option.value === ViewOption.RESULTS;
             });
         }
         this.growthPeriod = PeriodType.MONTHLY;
