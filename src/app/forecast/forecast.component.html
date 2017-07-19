@@ -42,7 +42,7 @@
                     <i class="fa fa-floppy-o"></i>
                 </div>
                 <div class="float-right">
-                    <div class="revenues-actuals-grid-manual-menu-item input-ctrl" [hidden]="editViewSelected === VIEW_OPTIONS.RESULTS">
+                    <div class="revenues-actuals-grid-manual-menu-item input-ctrl">
                         <label>Initial Value</label>
                         <input class="revenue-grid-ctrl" type="number" [(ngModel)]="manualStartValue" />
                     </div>
@@ -87,7 +87,7 @@
                         <td *ngFor="let model of year.MONTHS">
                             <span *ngIf="!isManual">
                                 <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">{{model.VALUE | currencyDelimitedWithComma}}</span>
-                            <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
+                            <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">{{model.INCREMENT | currencyDelimitedWithComma}}</span>
                             <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
                             </span>
                             <input type="number" *ngIf="isManual && editViewSelected === VIEW_OPTIONS.RESULTS" [(ngModel)]="model.MANUAL_VALUE" step="0.01" />
@@ -120,12 +120,12 @@
                         <td *ngFor="let model of year.QUARTERS">
                             <span *ngIf="!isManual">
                                 <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">{{model.VALUE | currencyDelimitedWithComma}}</span>
-                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{model.INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">{{model.INCREMENT | currencyDelimitedWithComma}}</span>
                                 <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{model.INCREMENT_PERCENT}} %</span>
                             </span>
                             <span *ngIf="isManual">
                                     <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.RESULTS" [(ngModel)]="model.MANUAL_VALUE" step="0.01" />
-                                    <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.INCREMENTS" [(ngModel)]="model.MANUAL_INCREMENT" step="0.01" />
+                                    <!-- <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.INCREMENTS" [(ngModel)]="model.MANUAL_INCREMENT" step="0.01" /> -->
                             </span>
                         </td>
                     </tr>
@@ -151,12 +151,12 @@
                         <td>
                             <span *ngIf="!isManual">
                                 <span [hidden]="viewSelected !== VIEW_OPTIONS.RESULTS">{{year.VALUE | currencyDelimitedWithComma}}</span>
-                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">$ {{year.INCREMENT | currencyDelimitedWithComma}}</span>
+                                <span [hidden]="viewSelected !== VIEW_OPTIONS.INCREMENTS">{{year.INCREMENT | currencyDelimitedWithComma}}</span>
                                 <span [hidden]="viewSelected !== VIEW_OPTIONS.PERCENT">{{year.INCREMENT_PERCENT}} %</span>
                             </span>
                             <span *ngIf="isManual">
                                     <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.RESULTS" [(ngModel)]="year.MANUAL_VALUE" step="0.01" />
-                                    <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.INCREMENTS" [(ngModel)]="year.MANUAL_INCREMENT" step="0.01" />
+                                    <!-- <input type="number" [hidden]="editViewSelected !== VIEW_OPTIONS.INCREMENTS" [(ngModel)]="year.MANUAL_INCREMENT" step="0.01" /> -->
                             </span>
                         </td>
                     </tr>
