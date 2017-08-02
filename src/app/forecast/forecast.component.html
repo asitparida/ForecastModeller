@@ -54,7 +54,7 @@
                     </div>
                 </div>
             </div>
-            <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.MONTHLY" class="w12">
+            <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.MONTHLY" class="w12" [class.tableLayoutFixed]="!isSafariBrowser">
                 <thead>
                     <tr>
                         <th>
@@ -97,7 +97,7 @@
                     </tr>
                 </tbody>
             </table>
-            <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.QUARTERLY" class="w4">
+            <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.QUARTERLY" class="w4" [class.tableLayoutFixed]="!isSafariBrowser">
                 <thead>
                     <tr>
                         <th>
@@ -131,7 +131,7 @@
                     </tr>
                 </tbody>
             </table>
-            <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.YEARLY" class="w1">
+            <table [hidden]="chartViewSelected !== PERIOD_TYPE_OPTIONS.YEARLY" class="w1" [class.tableLayoutFixed]="!isSafariBrowser">
                 <thead>
                     <tr>
                         <th>

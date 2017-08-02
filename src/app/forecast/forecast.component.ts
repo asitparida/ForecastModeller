@@ -8,7 +8,10 @@ import {
     ViewOption,
     MONTHNAMES
 } from './forecast.models';
-import { ChartsHelper } from './forecast.helper';
+import {
+    ChartsHelper,
+    BrowserDetect
+} from './forecast.helper';
 
 function onlyUnique(value, index, self) {
     return self.indexOf(value) === index;
@@ -87,6 +90,8 @@ export class ForecastComponent {
     PERIOD_TYPE_OPTIONS = PeriodType;
     GROWTH_TYPE_OPTIONS = GrowthType;
 
+    isSafariBrowser: Boolean = false;
+
     private startDate: Date;
     private endDate: Date;
 
@@ -96,6 +101,7 @@ export class ForecastComponent {
     forecastYears: ForecastYear[] = [];
 
     constructor() {
+        this.isSafariBrowser = BrowserDetect.isSafari();
         this.forecastYears = [];
         this.startValue = 100;
         this.startDateStr = '2016-01-15';
